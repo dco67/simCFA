@@ -1,0 +1,12 @@
+| Facteur 1 | Facteur 2 | HTMT |
+| --- | --- | --- |
+| Conscience | Agreabilite | 0,373 |
+| Extraversion | Agreabilite | 0,649 |
+| Neuroticisme | Agreabilite | 0,253 |
+| Ouverture | Agreabilite | 0,280 |
+| Extraversion | Conscience | 0,380 |
+| Neuroticisme | Conscience | 0,296 |
+| Ouverture | Conscience | 0,362 |
+| Neuroticisme | Extraversion | 0,301 |
+| Ouverture | Extraversion | 0,467 |
+| Ouverture | Neuroticisme | 0,260 |

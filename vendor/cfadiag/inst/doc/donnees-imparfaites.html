@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>3. Données imparfaites</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">3. Données imparfaites</h1>
+<h3 class="subtitle">Matrice publiée, données manquantes, indicateurs
+ordinaux</h3>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#une-matrice-publiée" id="toc-une-matrice-publiée">Une
+matrice publiée</a>
+<ul>
+<li><a href="#sans-les-écarts-types" id="toc-sans-les-écarts-types">Sans
+les écarts types</a></li>
+<li><a href="#avec-seulement-les-charges-publiées" id="toc-avec-seulement-les-charges-publiées">Avec seulement les charges
+publiées</a></li>
+</ul></li>
+<li><a href="#données-manquantes" id="toc-données-manquantes">Données
+manquantes</a>
+<ul>
+<li><a href="#bootstrap-sous-fiml" id="toc-bootstrap-sous-fiml">Bootstrap sous FIML</a></li>
+</ul></li>
+<li><a href="#indicateurs-ordinaux" id="toc-indicateurs-ordinaux">Indicateurs ordinaux</a></li>
+<li><a href="#en-résumé" id="toc-en-résumé">En résumé</a></li>
+<li><a href="#références" id="toc-références">Références</a></li>
+</ul>
+</div>
+
+<style>body { font-size: 16px; max-width: 820px; } pre, code { font-size: 14px; }</style>
+<p>Les données réelles sont rarement celles des manuels. On ne dispose
+parfois que d’une matrice publiée dans un article ; des réponses
+manquent ; les indicateurs sont des échelles de Likert à quelques
+catégories. Ces trois situations posent la même question :
+<strong>qu’est-ce qui reste calculable, et sur quelle matrice
+?</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(lavaan)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(cfadiag)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>HS <span class="ot">&lt;-</span> HolzingerSwineford1939</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>X  <span class="ot">&lt;-</span> HS[<span class="fu">paste0</span>(<span class="st">&quot;x&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>)]</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>modele <span class="ot">&lt;-</span> <span class="st">&quot;visuel  =~ x1 + x2 + x3</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="st">           verbal  =~ x4 + x5 + x6</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="st">           vitesse =~ x7 + x8 + x9&quot;</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>reference <span class="ot">&lt;-</span> <span class="fu">cfadiag</span>(<span class="fu">cfa</span>(modele, <span class="at">data =</span> HS))   <span class="co"># données complètes, pour comparer</span></span></code></pre></div>
+<div id="une-matrice-publiée" class="section level1">
+<h1>Une matrice publiée</h1>
+<p>Un article rapporte souvent une matrice de corrélations arrondie à
+deux décimales, avec les écarts types. Ces informations suffisent à
+estimer le modèle.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>R   <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">cor</span>(X), <span class="dv">2</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>et  <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">sapply</span>(X, sd), <span class="dv">2</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co"># getCov() lit le triangle inférieur ligne par ligne, diagonale comprise</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>S   <span class="ot">&lt;-</span> <span class="fu">getCov</span>(R[<span class="fu">upper.tri</span>(R, <span class="at">diag =</span> <span class="cn">TRUE</span>)], <span class="at">sds =</span> et, <span class="at">names =</span> <span class="fu">colnames</span>(R))</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>fit_S <span class="ot">&lt;-</span> <span class="fu">cfa</span>(modele, <span class="at">sample.cov =</span> S, <span class="at">sample.nobs =</span> <span class="dv">301</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>d_S <span class="ot">&lt;-</span> <span class="fu">cfadiag</span>(fit_S)</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="fu">cbind</span>(<span class="at">complet =</span> reference<span class="sc">$</span>fiabilite<span class="sc">$</span>omega, <span class="at">matrice =</span> d_S<span class="sc">$</span>fiabilite<span class="sc">$</span>omega)</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt;        complet   matrice</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; [1,] 0.6253180 0.6260665</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt; [2,] 0.8851754 0.8839859</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; [3,] 0.6877600 0.6896122</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="fu">round</span>(d_S<span class="sc">$</span>htmt, <span class="dv">3</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt;         visuel verbal vitesse</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; visuel   1.000  0.424   0.468</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt; verbal   0.424  1.000   0.289</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt; vitesse  0.468  0.289   1.000</span></span></code></pre></div>
+<p>Toutes les valeurs ponctuelles sont disponibles, HTMT compris, et
+l’arrondi à deux décimales ne les déplace qu’à la troisième. Seul le
+bootstrap est impossible : il rééchantillonne des observations qu’on n’a
+pas.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">try</span>(<span class="fu">boot_htmt</span>(<span class="fu">as.cfaModel</span>(fit_S), <span class="at">R =</span> <span class="dv">100</span>))</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt; Error : Le bootstrap du HTMT exige les données brutes.</span></span></code></pre></div>
+<div id="sans-les-écarts-types" class="section level2">
+<h2>Sans les écarts types</h2>
+<p>Si l’article ne donne que les corrélations, on estime le modèle sur
+la matrice de corrélations elle-même. Tous les indicateurs ont alors une
+variance de 1.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>fit_R <span class="ot">&lt;-</span> <span class="fu">cfa</span>(modele, <span class="at">sample.cov =</span> R, <span class="at">sample.nobs =</span> <span class="dv">301</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">cfadiag</span>(fit_R)<span class="sc">$</span>fiabilite[, <span class="fu">c</span>(<span class="st">&quot;facteur&quot;</span>, <span class="st">&quot;omega&quot;</span>, <span class="st">&quot;CR&quot;</span>, <span class="st">&quot;alpha&quot;</span>)]</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt;   facteur     omega        CR     alpha</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; 1  visuel 0.6265729 0.6265729 0.6279070</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; 2  verbal 0.8837520 0.8837520 0.8835616</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; 3 vitesse 0.6932659 0.6932659 0.6906475</span></span></code></pre></div>
+<p>L’oméga et la CR deviennent identiques, puisque la somme brute et la
+somme des scores <span class="math inline">\(z\)</span> sont la même
+chose. L’oméga obtenu est celui d’une échelle formée d’indicateurs
+standardisés, qui peut différer légèrement de celui de la somme des
+scores bruts. Les erreurs types de lavaan sont par ailleurs
+approximatives lorsqu’on analyse des corrélations comme des covariances
+; les indices de cfadiag, eux, ne dépendent pas des erreurs types.</p>
+</div>
+<div id="avec-seulement-les-charges-publiées" class="section level2">
+<h2>Avec seulement les charges publiées</h2>
+<p>Lorsqu’un article ne donne que les charges standardisées et les
+corrélations entre facteurs, <code>cfaModel()</code> permet de
+reconstituer la matrice impliquée et de calculer ce qui en dépend.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="dv">6</span>, <span class="dv">2</span>, <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">paste0</span>(<span class="st">&quot;e&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>), <span class="fu">c</span>(<span class="st">&quot;Engagement&quot;</span>, <span class="st">&quot;Fatigue&quot;</span>)))</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>L[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="st">&quot;Engagement&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">c</span>(.<span class="dv">78</span>, .<span class="dv">71</span>, .<span class="dv">66</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>L[<span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>, <span class="st">&quot;Fatigue&quot;</span>]    <span class="ot">&lt;-</span> <span class="fu">c</span>(.<span class="dv">82</span>, .<span class="dv">74</span>, .<span class="dv">59</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>Phi <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="sc">-</span>.<span class="dv">42</span>, <span class="sc">-</span>.<span class="dv">42</span>, <span class="dv">1</span>), <span class="dv">2</span>, <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">colnames</span>(L), <span class="fu">colnames</span>(L)))</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>Sigma <span class="ot">&lt;-</span> L <span class="sc">%*%</span> Phi <span class="sc">%*%</span> <span class="fu">t</span>(L); <span class="fu">diag</span>(Sigma) <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>publie <span class="ot">&lt;-</span> <span class="fu">cfaModel</span>(<span class="at">loadings =</span> L, <span class="at">cov_lv =</span> Phi, <span class="at">implied =</span> Sigma)</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="fu">compute_reliability</span>(publie)[, <span class="fu">c</span>(<span class="st">&quot;facteur&quot;</span>, <span class="st">&quot;omega&quot;</span>, <span class="st">&quot;CR&quot;</span>, <span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;H&quot;</span>)]</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt;      facteur     omega        CR alpha         H</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt; 1 Engagement 0.7609805 0.7609805    NA 0.7696890</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt; 2    Fatigue 0.7634943 0.7634943    NA 0.7915326</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="fu">compute_validity</span>(publie)<span class="sc">$</span>table</span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt;      facteur       AVE    MSV    ASV AVE_superieure_MSV</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt; 1 Engagement 0.5160333 0.1764 0.1764               TRUE</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt; 2    Fatigue 0.5227000 0.1764 0.1764               TRUE</span></span></code></pre></div>
+<p>Oméga, CR, H, AVE, MSV et ASV sont calculables, car ils ne dépendent
+que du modèle. L’alpha et le HTMT ne le sont pas : ils exigent la
+matrice observée, et la matrice impliquée ne la remplace pas. La
+corrélation négative entre les facteurs est prise en valeur absolue pour
+la MSV.</p>
+</div>
+</div>
+<div id="données-manquantes" class="section level1">
+<h1>Données manquantes</h1>
+<p>Retirons des valeurs de x2 et de x5 selon un mécanisme MAR : la
+probabilité qu’une valeur manque dépend d’une autre variable observée
+(x1 pour x2, x4 pour x5). Ce mécanisme est fréquent et biaise l’analyse
+des cas complets.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>H2 <span class="ot">&lt;-</span> HS</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>H2<span class="sc">$</span>x2[<span class="fu">runif</span>(<span class="dv">301</span>) <span class="sc">&lt;</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="dv">2</span> <span class="sc">+</span> <span class="fl">1.5</span> <span class="sc">*</span> <span class="fu">scale</span>(H2<span class="sc">$</span>x1))] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>H2<span class="sc">$</span>x5[<span class="fu">runif</span>(<span class="dv">301</span>) <span class="sc">&lt;</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="dv">2</span> <span class="sc">+</span> <span class="fl">1.5</span> <span class="sc">*</span> <span class="fu">scale</span>(H2<span class="sc">$</span>x4))] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(H2[<span class="fu">c</span>(<span class="st">&quot;x2&quot;</span>, <span class="st">&quot;x5&quot;</span>)]))</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt; x2 x5 </span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; 57 66</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>fit_lw   <span class="ot">&lt;-</span> <span class="fu">cfa</span>(modele, <span class="at">data =</span> H2)                     <span class="co"># cas complets</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>fit_fiml <span class="ot">&lt;-</span> <span class="fu">cfa</span>(modele, <span class="at">data =</span> H2, <span class="at">missing =</span> <span class="st">&quot;fiml&quot;</span>)   <span class="co"># FIML</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="fu">c</span>(<span class="at">cas_complets =</span> <span class="fu">nobs</span>(fit_lw), <span class="at">fiml =</span> <span class="fu">nobs</span>(fit_fiml))</span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co">#&gt; cas_complets         fiml </span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt;          193          301</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>d_lw   <span class="ot">&lt;-</span> <span class="fu">cfadiag</span>(fit_lw)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>d_fiml <span class="ot">&lt;-</span> <span class="fu">cfadiag</span>(fit_fiml)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">facteur  =</span> reference<span class="sc">$</span>fiabilite<span class="sc">$</span>facteur,</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>           <span class="at">complet  =</span> reference<span class="sc">$</span>fiabilite<span class="sc">$</span>omega,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>           <span class="at">cas_complets =</span> d_lw<span class="sc">$</span>fiabilite<span class="sc">$</span>omega,</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>           <span class="at">fiml     =</span> d_fiml<span class="sc">$</span>fiabilite<span class="sc">$</span>omega)</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt;   facteur   complet cas_complets      fiml</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; 1  visuel 0.6253180    0.4988172 0.6120809</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; 2  verbal 0.8851754    0.8765279 0.8991287</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt; 3 vitesse 0.6877600    0.7184287 0.6881921</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>haut <span class="ot">&lt;-</span> <span class="cf">function</span>(H) H[<span class="fu">upper.tri</span>(H)]</span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">paire =</span> <span class="fu">c</span>(<span class="st">&quot;visuel – verbal&quot;</span>, <span class="st">&quot;visuel – vitesse&quot;</span>, <span class="st">&quot;verbal – vitesse&quot;</span>),</span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>           <span class="at">complet =</span> <span class="fu">haut</span>(reference<span class="sc">$</span>htmt), <span class="at">cas_complets =</span> <span class="fu">haut</span>(d_lw<span class="sc">$</span>htmt), <span class="at">fiml =</span> <span class="fu">haut</span>(d_fiml<span class="sc">$</span>htmt))</span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt;              paire   complet cas_complets      fiml</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt; 1  visuel – verbal 0.4243230    0.3090814 0.4187177</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#&gt; 2 visuel – vitesse 0.4665497    0.4331208 0.4740967</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#&gt; 3 verbal – vitesse 0.2895679    0.2081896 0.2912666</span></span></code></pre></div>
+<p>L’analyse des cas complets perd 108 élèves sur 301, surtout parmi les
+élèves forts en x1 et en x4. L’oméga du facteur visuel tombe de 0,625 à
+0,499, et le HTMT visuel–verbal de 0,424 à 0,309. Avec FIML, toutes les
+observations sont utilisées et les valeurs restent proches de celles des
+données complètes.</p>
+<p>Avec <code>missing = &quot;fiml&quot;</code>, cfadiag prend comme matrice
+observée l’estimation EM du modèle saturé. C’est sur elle que portent
+l’alpha, l’oméga avec <code>variance = &quot;observee&quot;</code> et le HTMT.</p>
+<div id="bootstrap-sous-fiml" class="section level2">
+<h2>Bootstrap sous FIML</h2>
+<p>Le bootstrap réestime cette matrice EM à chaque réplication, si bien
+que la valeur ponctuelle et les réplications reposent sur le même
+traitement des absences.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">boot_htmt</span>(<span class="fu">as.cfaModel</span>(fit_fiml), <span class="at">R =</span> <span class="dv">200</span>, <span class="at">seed =</span> <span class="dv">1</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>b<span class="sc">$</span>table[, <span class="fu">c</span>(<span class="st">&quot;facteur1&quot;</span>, <span class="st">&quot;facteur2&quot;</span>, <span class="st">&quot;htmt&quot;</span>, <span class="st">&quot;borne_inf&quot;</span>, <span class="st">&quot;borne_sup&quot;</span>)]</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt;   facteur1 facteur2      htmt borne_inf borne_sup</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt; 1   visuel   verbal 0.4187177 0.2882979 0.5938221</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt; 2   visuel  vitesse 0.4740967 0.3514758 0.6318218</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; 3   verbal  vitesse 0.2912666 0.1367115 0.4298226</span></span></code></pre></div>
+<p>Ce bootstrap est plus lent que celui des données complètes (une
+estimation EM par réplication). Pour un rapport final, on augmentera
+<code>R</code> à 1000 ou 2000. L’argument
+<code>missing = &quot;complete.obs&quot;</code> de <code>boot_htmt()</code> permet
+au besoin d’obtenir le bootstrap des cas complets.</p>
+</div>
+</div>
+<div id="indicateurs-ordinaux" class="section level1">
+<h1>Indicateurs ordinaux</h1>
+<p>Découpons chacun des neuf tests en catégories ordonnées, comme le
+seraient des réponses à une échelle de Likert, et comparons deux
+analyses : déclarer les indicateurs ordinaux (WLSMV, corrélations
+polychoriques), ou les traiter comme continus (ML sur les codes).</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>decouper <span class="ot">&lt;-</span> <span class="cf">function</span>(k) <span class="fu">as.data.frame</span>(<span class="fu">lapply</span>(X, <span class="cf">function</span>(z)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">cut</span>(z, <span class="fu">quantile</span>(z, <span class="dv">0</span><span class="sc">:</span>k <span class="sc">/</span> k), <span class="at">include.lowest =</span> <span class="cn">TRUE</span>, <span class="at">labels =</span> <span class="cn">FALSE</span>)))</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>), <span class="cf">function</span>(k) {</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  Hk <span class="ot">&lt;-</span> <span class="fu">decouper</span>(k)</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  o <span class="ot">&lt;-</span> <span class="fu">cfadiag</span>(<span class="fu">cfa</span>(modele, <span class="at">data =</span> Hk, <span class="at">ordered =</span> <span class="fu">names</span>(Hk)))<span class="sc">$</span>fiabilite<span class="sc">$</span>omega</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  cc <span class="ot">&lt;-</span> <span class="fu">cfadiag</span>(<span class="fu">cfa</span>(modele, <span class="at">data =</span> Hk))<span class="sc">$</span>fiabilite<span class="sc">$</span>omega</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">categories =</span> k, <span class="at">facteur =</span> <span class="fu">c</span>(<span class="st">&quot;visuel&quot;</span>, <span class="st">&quot;verbal&quot;</span>, <span class="st">&quot;vitesse&quot;</span>),</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>             <span class="at">omega_ordinal =</span> o, <span class="at">omega_codes =</span> cc)</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>}))</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>res</span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt;   categories facteur omega_ordinal omega_codes</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt; 1          2  visuel     0.6372643   0.4840582</span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#&gt; 2          2  verbal     0.9013772   0.7800537</span></span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#&gt; 3          2 vitesse     0.6528045   0.4726953</span></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co">#&gt; 4          3  visuel     0.6234031   0.5385337</span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co">#&gt; 5          3  verbal     0.8871403   0.8220784</span></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="co">#&gt; 6          3 vitesse     0.6980189   0.6150333</span></span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a><span class="co">#&gt; 7          5  visuel     0.6532800   0.6100110</span></span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a><span class="co">#&gt; 8          5  verbal     0.8950449   0.8641647</span></span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a><span class="co">#&gt; 9          5 vitesse     0.7047271   0.6365611</span></span></code></pre></div>
+<p>Les deux colonnes ne mesurent pas la même chose.</p>
+<ul>
+<li><strong>Avec <code>ordered</code></strong>, la matrice observée est
+celle des corrélations polychoriques, qui portent sur les réponses
+continues supposées sous-jacentes aux catégories. Oméga, CR, alpha et
+HTMT décrivent ces réponses latentes. Ils varient peu avec le nombre de
+catégories, et restent proches des valeurs obtenues sur les scores
+d’origine (0,625 ; 0,885 ; 0,688).</li>
+<li><strong>Sur les codes</strong>, la catégorisation ajoute de
+l’erreur, et la fiabilité de la somme des codes est plus faible, surtout
+avec deux ou trois catégories.</li>
+</ul>
+<p>Le choix dépend du score qu’on veut qualifier. Si l’on interprète des
+facteurs latents, la colonne ordinale est la bonne. Si l’on calcule
+ensuite la somme des réponses brutes, sa fiabilité réelle est plus
+proche de la seconde colonne. <code>semTools::compRelSEM()</code>
+calcule par défaut, pour des indicateurs ordinaux, l’oméga catégoriel de
+Green et Yang (2009), qui porte sur la somme des codes ; c’est pourquoi
+il donne des valeurs inférieures à celles de cfadiag.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>H4 <span class="ot">&lt;-</span> <span class="fu">decouper</span>(<span class="dv">4</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>d_o <span class="ot">&lt;-</span> <span class="fu">cfadiag</span>(<span class="fu">cfa</span>(modele, <span class="at">data =</span> H4, <span class="at">ordered =</span> <span class="fu">names</span>(H4)))</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>ind <span class="ot">&lt;-</span> d_o<span class="sc">$</span>ajustement</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>ind<span class="sc">$</span>valeur <span class="ot">&lt;-</span> <span class="fu">round</span>(ind<span class="sc">$</span>valeur, <span class="dv">3</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>ind[ind<span class="sc">$</span>indice <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;chisq&quot;</span>, <span class="st">&quot;cfi&quot;</span>, <span class="st">&quot;tli&quot;</span>, <span class="st">&quot;rmsea&quot;</span>), <span class="fu">c</span>(<span class="st">&quot;indice&quot;</span>, <span class="st">&quot;valeur&quot;</span>, <span class="st">&quot;version&quot;</span>)]</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt;   indice valeur version</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; 1  chisq 74.152  scaled</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co">#&gt; 4    cfi  0.905  robust</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co">#&gt; 5    tli  0.857  robust</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="co">#&gt; 6  rmsea  0.112  robust</span></span></code></pre></div>
+<p>Avec WLSMV, le rapport donne les versions corrigées
+(<code>scaled</code>, <code>robust</code>) des indices d’ajustement. Le
+bootstrap n’est pas proposé pour des indicateurs ordinaux, car il
+faudrait réestimer les corrélations polychoriques à chaque
+réplication.</p>
+</div>
+<div id="en-résumé" class="section level1">
+<h1>En résumé</h1>
+<table>
+<colgroup>
+<col width="14%" />
+<col width="27%" />
+<col width="19%" />
+<col width="14%" />
+<col width="23%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situation</th>
+<th>Valeurs ponctuelles</th>
+<th>Alpha et HTMT</th>
+<th>Bootstrap</th>
+<th>Matrice observée</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Données brutes complètes</td>
+<td>oui</td>
+<td>oui</td>
+<td>oui</td>
+<td>covariances de l’échantillon</td>
+</tr>
+<tr class="even">
+<td>Matrice de covariances</td>
+<td>oui</td>
+<td>oui</td>
+<td>non</td>
+<td>matrice fournie</td>
+</tr>
+<tr class="odd">
+<td>Charges publiées seulement</td>
+<td>oui</td>
+<td>non</td>
+<td>non</td>
+<td>aucune</td>
+</tr>
+<tr class="even">
+<td>FIML</td>
+<td>oui</td>
+<td>oui</td>
+<td>oui (EM réestimée)</td>
+<td>estimation EM</td>
+</tr>
+<tr class="odd">
+<td>Indicateurs ordinaux</td>
+<td>oui (réponses latentes)</td>
+<td>oui (polychoriques)</td>
+<td>non</td>
+<td>corrélations polychoriques</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="références" class="section level1">
+<h1>Références</h1>
+<p>Enders, C. K. (2010). <em>Applied missing data analysis</em>.
+Guilford Press.</p>
+<p>Green, S. B. et Yang, Y. (2009). Reliability of summed item scores
+using structural equation modeling: An alternative to coefficient alpha.
+<em>Psychometrika</em>, 74(1), 155–167.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

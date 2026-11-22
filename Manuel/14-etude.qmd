@@ -1,0 +1,122 @@
+# Construire une conclusion autonome sur un modèle {#sec-etude}
+
+```{r}
+#| include: false
+source("_common.R")
+MQ <- REF$msq_affect; MF <- MQ$fit
+vf <- function(ver, col) MQ$versions[[col]][MQ$versions$Version == ver]
+r_pn <- MQ$cor["AffectPositif", "AffectNegatif"]
+```
+
+::: {.callout-note title="Objectifs du chapitre"}
+- Conduire une analyse complète, de la question à la conclusion écrite.
+- Articuler ajustement, fiabilité et distinction des facteurs lorsqu’ils ne vont pas dans le même sens.
+- Rédiger une conclusion prudente et reproductible.
+:::
+
+## La question
+
+Nous souhaitons examiner si les réponses à vingt adjectifs d’état peuvent être représentées par deux dimensions corrélées, affect positif et affect négatif. Nous disposons du sous-ensemble MSQ inclus dans l’application. L’enjeu est de décider si cette structure simple fournit une représentation suffisamment défendable pour l’usage envisagé, et de préciser ce que les résultats laissent en suspens.
+
+Ce cas est volontairement plus difficile qu’une démonstration où tous les indices seraient favorables. Il oblige à articuler la force des relations, la fiabilité et les défauts d’ajustement.
+
+## Définir le modèle avant de calculer
+
+Les dix indicateurs positifs sont `active`, `alert`, `attentive`, `determined`, `enthusiastic`, `excited`, `inspired`, `interested`, `proud` et `strong`. Les dix indicateurs négatifs sont `afraid`, `ashamed`, `distressed`, `guilty`, `hostile`, `irritable`, `jittery`, `nervous`, `scared` et `upset`.
+
+L’hypothèse implique un facteur par ensemble, une corrélation entre les deux facteurs et aucune covariance résiduelle ajoutée. Les catégories 0 à 3 sont déclarées ordinales. Cette structure doit être reconnue comme une simplification : des adjectifs voisins peuvent partager un contenu plus spécifique que leur seule appartenance à une tonalité positive ou négative.
+
+## Préparer et vérifier
+
+Sélectionnez MSQ, chargez son modèle et vérifiez les deux groupes. Choisissez WLSMV, les cas complets et l’indicateur de référence. Les vingt items doivent être cochés comme ordinaux. Estimez puis vérifiez les **`r ent(MQ$n)` observations utilisées** et les **`r ix(MF, "df", 0)` degrés de liberté**.
+
+Conservez le modèle initial avant d’examiner des propositions de modification. Si vous souhaitez regarder les indices de modification, fixez leur seuil d’affichage avant une nouvelle estimation du même modèle et notez que cette inspection intervient après l’observation des résultats.
+
+## Juger la solution numérique
+
+La convergence et l’admissibilité permettent de passer à l’interprétation; elles ne répondent pas encore à la question d’ajustement. Vérifiez les avertissements plutôt que de déduire de la présence d’un tableau que tout s’est déroulé correctement.
+
+Les seuils appartiennent au modèle ordinal. Leur lecture exige de garder à l’esprit l’orientation du facteur et le codage des catégories. Ils ne sont pas des seuils de diagnostic clinique ni des frontières entre personnes « positives » et « négatives ».
+
+## Évaluer l’ajustement avec la bonne version
+
+Dans la synthèse, les repères de l’analyse de référence sont : chi carré corrigé de **`r ix(MF, "chisq")`**, `r ix(MF, "df", 0)` degrés de liberté, **CFI robuste `r ix(MF, "cfi")`**, **TLI robuste `r ix(MF, "tli")`**, **RMSEA robuste `r ix(MF, "rmsea")`**, avec un intervalle de **`r ix(MF, "rmsea.ci.lower")` à `r ix(MF, "rmsea.ci.upper")`**, et **SRMR `r ix(MF, "srmr")`**. La valeur de p du test global est très inférieure à 0,001.
+
+Ces valeurs ne soutiennent pas une reproduction satisfaisante de l’ensemble des relations par ce modèle à deux facteurs simples. La version standard du CFI, `r v(vf("Standard", "CFI"))`, doit être annoncée comme telle si elle est citée; elle ne remplace pas silencieusement les versions corrigées disponibles.
+
+Un grand effectif rend le test global sensible, mais cet argument ne suffit pas à expliquer ou à écarter tous les autres écarts. Le SRMR et les indices robustes invitent aussi à examiner la structure et les relations locales.
+
+## Examiner la qualité de mesure
+
+Les indices de fiabilité et d’AVE donnent les repères suivants :
+
+```{r}
+#| label: tbl-msq-fiab
+#| tbl-cap: "MSQ : indices de fiabilité et de validité convergente (WLSMV, réponses latentes; alpha sur les scores observés)."
+tab(MQ$val$results[, c("Facteur", "Alpha", "Omega", "AVE", "H")])
+```
+
+```{r}
+#| label: fig-msq-sat
+#| fig-cap: "Saturations standardisées des vingt adjectifs MSQ sur leur facteur (WLSMV). Les saturations sont fortes dans l’ensemble, ce qui explique des omégas élevés malgré un ajustement global insuffisant."
+#| fig-height: 4.8
+d <- MQ$sat; d <- d[order(d$Facteur, d$Std), ]; d$Item <- factor(d$Item, levels = d$Item)
+ggplot(d, aes(Std, Item, fill = Facteur)) + geom_col(width = .7) +
+  geom_text(aes(label = v(Std, 2)), hjust = -.15, size = 3) +
+  scale_fill_manual(values = unname(PAL[c("orange", "bleu")])) +
+  scale_x_continuous(limits = c(0, 1.05), labels = function(x) v(x, 1)) +
+  labs(x = "Saturation standardisée", y = NULL, fill = NULL) + theme_manuel(11)
+```
+
+Les omégas sont élevés pour les deux dimensions. Dans cette analyse ordinale, ils portent sur les réponses latentes continues. Ils n’établissent ni la validité globale du modèle ni la fiabilité exacte d’une somme des catégories observées.
+
+La présence de relations fortes à l’intérieur d’un ensemble peut produire une forte cohérence tout en laissant des sous-structures non représentées. Des différences de contenu, des proximités lexicales ou des effets de méthode peuvent expliquer des relations résiduelles. Ces possibilités demandent une analyse substantielle et, idéalement, une vérification dans un échantillon indépendant.
+
+## Examiner la distinction des facteurs
+
+La corrélation factorielle estimée est :
+
+```{r}
+#| label: tbl-msq-cor
+#| tbl-cap: "MSQ : corrélation estimée entre les deux facteurs."
+tab(data.frame(`Facteur 1` = "AffectPositif", `Facteur 2` = "AffectNegatif", Corrélation = r_pn, check.names = FALSE))
+```
+
+La corrélation estimée est ici `r if (abs(r_pn) < .3) "faible" else "modérée"` et `r if (r_pn > 0) "positive" else "négative"`, de **`r v(r_pn)`**. Les deux ensembles ne présentent donc pas, dans cette analyse, une forte opposition sur une dimension unique. Ce coefficient dépend toutefois d’un modèle globalement mal ajusté : il faut le discuter avec cette réserve, sans lui attribuer à lui seul la preuve d’une indépendance des construits. Le sens positif ou négatif d’un nom de facteur ne détermine pas le signe de sa relation avec un autre facteur.
+
+Le HTMT fournit un complément :
+
+```{r}
+#| label: tbl-msq-htmt
+#| tbl-cap: "MSQ : HTMT calculé sur les corrélations polychoriques."
+H <- MQ$val$HTMT
+tab(data.frame(`Facteur 1` = rownames(H)[1], `Facteur 2` = colnames(H)[2], HTMT = H[1, 2], check.names = FALSE))
+```
+
+Une distinction empirique entre les deux ensembles ne répare pas le mauvais ajustement des relations à l’intérieur ou entre les ensembles. La validité discriminante et l’ajustement global sont deux questions à articuler.
+
+## Une rédaction possible
+
+> Les vingt adjectifs du sous-ensemble MSQ ont été analysés comme indicateurs ordinaux de deux facteurs corrélés. Seule la première occasion de mesure a été retenue dans le fichier fourni. L’estimation WLSMV par cas complets utilise `r ent(MQ$n)` participants sur les `r ent(MQ$lignes)` lignes chargées. La solution est convergée et admissible. Toutefois, les indices corrigés et le SRMR indiquent des écarts importants pour cette structure simple; le CFI robuste est de `r ix(MF, "cfi")` et le RMSEA robuste de `r ix(MF, "rmsea")`. Les coefficients de fiabilité sur les réponses latentes sont élevés, mais ne suffisent pas à soutenir l’adéquation du modèle ni à caractériser directement la somme des catégories observées. La structure à deux facteurs constitue donc un point de départ à approfondir à partir du contenu des adjectifs, des relations résiduelles et des conditions de recueil.
+
+Cette rédaction répond à la question sans transformer les indices en verdict sur l’existence des émotions ou sur la valeur générale du questionnaire. Elle distingue le fichier analysé, le modèle spécifique et l’usage possible des scores.
+
+## Que faire ensuite
+
+Une suite raisonnable commence par une revue du contenu et des conditions de recueil. On peut formuler des hypothèses sur des facettes plus précises ou des spécificités de méthode, puis les examiner avec une procédure appropriée. Une modification décidée après inspection doit être annoncée comme telle. Une nouvelle étude peut tester si elle se maintient.
+
+L’application actuelle ne transforme pas automatiquement ces propositions en modèle hiérarchique, bifactoriel, multigroupe ou longitudinal. Le fait de disposer de données susceptibles de telles analyses ne signifie pas que tous ces modèles ont été estimés ici.
+
+## Votre bilan
+
+Avant de considérer votre analyse terminée, vérifiez que vous pouvez expliquer les points suivants sans ouvrir le code : les indicateurs retenus, leur nature, l’identification, les observations utilisées, les versions des indices, la cible des coefficients de fiabilité, les limites des diagnostics et le sens de la conclusion.
+
+Une analyse aboutie conserve une trace reproductible et reconnaît ses incertitudes. Elle ne consiste pas à faire passer tous les voyants au vert.
+
+::: {.callout-important title="À retenir"}
+- Une conclusion répond à la question posée, avec ses données, son modèle, sa méthode et ses limites.
+- Une forte fiabilité et un mauvais ajustement peuvent coexister : ce sont deux questions différentes.
+- Les indices se citent avec leur version; une modification décidée après inspection s’annonce comme telle.
+- Une analyse aboutie ne fait pas passer tous les voyants au vert : elle explique ceux qui restent rouges.
+:::
+

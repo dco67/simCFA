@@ -1,0 +1,5 @@
+| Facteur 1 | Facteur 2 | HTMT |
+| --- | --- | --- |
+| Texte | Visuel | 0,424 |
+| Vitesse | Visuel | 0,467 |
+| Vitesse | Texte | 0,290 |

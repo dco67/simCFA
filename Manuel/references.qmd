@@ -1,0 +1,10 @@
+# Références et prolongements {.unnumbered}
+
+Les références méthodologiques ci-dessous éclairent les modèles de mesure, l’ajustement et les indices de qualité de mesure. Les pages de documentation décrivent les conventions du moteur utilisé par l’application. Leur présence ne signifie pas qu’un lecteur doive programmer pour réaliser les activités du manuel.
+
+Les notices des sept jeux de données sont accessibles dans l’application par **Notice et modèle**. Le complément de données conserve aussi les références et les sélections effectuées. Les traductions de sens proposées pour les adjectifs servent à la compréhension pédagogique; elles ne constituent pas une validation francophone d’un instrument.
+
+Pour approfondir les modèles de mesure, les ouvrages de Bollen et de Brown développent le cadre conceptuel et les conditions d’interprétation. McDonald traite notamment la théorie des tests et les coefficients fondés sur les modèles. Les articles sur HTMT et HTMT2 doivent être lus avec leurs conditions d’utilisation.
+
+::: {#refs}
+:::

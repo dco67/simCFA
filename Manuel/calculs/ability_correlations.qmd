@@ -1,0 +1,8 @@
+| Facteur 1 | Facteur 2 | Corrélation |
+| --- | --- | --- |
+| Lettres | Raisonnement | 0,812 |
+| Matrices | Raisonnement | 0,780 |
+| Rotation | Raisonnement | 0,698 |
+| Matrices | Lettres | 0,780 |
+| Rotation | Lettres | 0,600 |
+| Rotation | Matrices | 0,623 |

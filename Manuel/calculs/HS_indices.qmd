@@ -1,0 +1,11 @@
+| Indice | Valeur |
+| --- | --- |
+| chisq | 85,306 |
+| df | 24 |
+| pvalue | < 0,001 |
+| cfi | 0,931 |
+| tli | 0,896 |
+| rmsea | 0,092 |
+| rmsea.ci.lower | 0,071 |
+| rmsea.ci.upper | 0,114 |
+| srmr | 0,065 |

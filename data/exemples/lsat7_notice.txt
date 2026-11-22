@@ -1,0 +1,18 @@
+LSAT 7 — 1 000 réponses, 5 items binaires
+Section 7 (débat) du LSAT, 1 000 observations; second exemple de Bock et Lieberman (1970).
+
+Le modèle unidimensionnel décrit-il aussi bien cette autre série de cinq items ?
+
+Q1–Q5 : cinq items de la section 7
+0 = réponse incorrecte; 1 = réponse correcte
+
+Les lignes proviennent du développement d’une table de profils; aucun identifiant individuel d’origine n’est disponible. Ne fusionnez pas les lignes des sections 6 et 7 comme si elles appartenaient aux mêmes personnes. Items ordinaux, estimation WLSMV.
+
+Préparation : Copie de psych::lsat7, sans modification des réponses; fichier à 1 000 lignes dérivé de la table des profils.
+Source : psych
+Bock, R. D. et Lieberman, M. (1970). Fitting a response model for n dichotomously scored items. Psychometrika, 35, 179–197.
+https://search.r-project.org/CRAN/refmans/psych/html/bock.table.html
+
+Estimateur proposé : WLSMV
+Modèle de départ :
+Aptitude =~ Q1 + Q2 + Q3 + Q4 + Q5

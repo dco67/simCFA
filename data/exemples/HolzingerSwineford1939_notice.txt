@@ -1,0 +1,21 @@
+Holzinger–Swineford — 301 élèves, 9 tests cognitifs
+Neuf tests cognitifs administrés à 301 élèves de deux écoles; données classiques de Holzinger et Swineford (1939).
+
+Trois aptitudes corrélées représentent-elles les neuf tests cognitifs ?
+
+x1 : perception visuelle; x2 : cubes; x3 : losanges
+x4 : compréhension de paragraphes; x5 : phrases; x6 : sens des mots
+x7 : additions; x8 : comptage de points; x9 : discrimination de lettres
+
+Indicateurs traités comme continus. Le modèle est une hypothèse à évaluer : examinez les résidus et les saturations, même si certains indices paraissent satisfaisants. Le fichier conserve aussi les variables descriptives d’origine, qui ne sont pas des indicateurs du modèle.
+
+Préparation : Copie complète du fichier de lavaan; aucun recodage ni retrait de ligne.
+Source : lavaan
+Holzinger, K. J. et Swineford, F. (1939). A study in factor analysis: The stability of a bi-factor solution. Supplementary Educational Monographs, 48.
+https://search.r-project.org/CRAN/refmans/lavaan/html/HolzingerSwineford1939.html
+
+Estimateur proposé : ML
+Modèle de départ :
+Visuel =~ x1 + x2 + x3
+Texte =~ x4 + x5 + x6
+Vitesse =~ x7 + x8 + x9

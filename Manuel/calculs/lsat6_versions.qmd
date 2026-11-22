@@ -1,0 +1,5 @@
+| Version | CFI | RMSEA |
+| --- | --- | --- |
+| Standard | 1,000 | 0,000 |
+| Scaled | 1,000 | 0,000 |
+| Robust | 1,000 | 0,000 |

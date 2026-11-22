@@ -1,0 +1,5 @@
+| Facteur 1 | Facteur 2 | Corrélation |
+| --- | --- | --- |
+| Texte | Visuel | 0,459 |
+| Vitesse | Visuel | 0,471 |
+| Vitesse | Texte | 0,283 |

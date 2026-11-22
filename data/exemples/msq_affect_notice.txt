@@ -1,0 +1,20 @@
+MSQ — 3 032 personnes, 20 items d’affect
+Première passation du MSQ pour 3 032 participants : vingt adjectifs associés à l’affect positif et négatif dans la documentation du jeu.
+
+Deux facteurs corrélés d’affect positif et négatif représentent-ils les réponses à ces adjectifs ?
+
+AffectPositif : actif, alerte, attentif, déterminé, enthousiaste, excité, inspiré, intéressé, fier, fort (traductions indicatives)
+AffectNegatif : apeuré, honteux, en détresse, coupable, hostile, irritable, agité, nerveux, effrayé, bouleversé (traductions indicatives)
+Réponses à propos du moment présent : 0 = pas du tout; 1 = un peu; 2 = modérément; 3 = beaucoup
+
+Sous-ensemble du MSQ, selon les clés PA/NA documentées; il ne s’agit pas d’une nouvelle passation indépendante du PANAS. Seule la première occasion est conservée pour ne pas traiter les mesures répétées comme des personnes supplémentaires. Plusieurs études et conditions sont réunies; la structure simple reste à examiner.
+
+Préparation : Sélection exacte msqR$time == 1, puis des vingt colonnes PA/NA. 3 032 lignes conservées, ordre d’origine; aucune imputation, inversion ni standardisation.
+Source : psychTools
+Revelle, W. et Anderson, K. J. (1998). Personality, motivation and cognitive performance. Données du Personality, Motivation and Cognition Laboratory, Northwestern University. Clés PA/NA documentées dans msqR; Watson, Clark et Tellegen (1988).
+https://search.r-project.org/CRAN/refmans/psychTools/html/msqR.html
+
+Estimateur proposé : WLSMV
+Modèle de départ :
+AffectPositif =~ active + alert + attentive + determined + enthusiastic + excited + inspired + interested + proud + strong
+AffectNegatif =~ afraid + ashamed + distressed + guilty + hostile + irritable + jittery + nervous + scared + upset

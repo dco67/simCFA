@@ -1,0 +1,11 @@
+| Facteur | Item | Saturation |
+| --- | --- | --- |
+| Visuel | x1 | 0,772 |
+| Visuel | x2 | 0,424 |
+| Visuel | x3 | 0,581 |
+| Texte | x4 | 0,852 |
+| Texte | x5 | 0,855 |
+| Texte | x6 | 0,838 |
+| Vitesse | x7 | 0,570 |
+| Vitesse | x8 | 0,723 |
+| Vitesse | x9 | 0,665 |

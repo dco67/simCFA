@@ -1,0 +1,4 @@
+| Facteur | Alpha | Omega | AVE | H |
+| --- | --- | --- | --- | --- |
+| AffectPositif | 0,911 | 0,940 | 0,612 | 0,945 |
+| AffectNegatif | 0,837 | 0,934 | 0,590 | 0,954 |

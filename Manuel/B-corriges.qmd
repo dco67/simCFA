@@ -1,0 +1,154 @@
+# Corrigés et repères pour le travail autonome {#sec-corriges}
+
+```{r}
+#| include: false
+source("_common.R")
+S <- REF$hs$sat; st <- function(i) S$Std[S$Item == i]; VR <- REF$hs$val$results
+PD <- REF$PoliticalDemocracy; L7 <- REF$lsat7; AB <- REF$ability; MQ <- REF$msq_affect
+```
+
+## Comment utiliser les repères
+
+Les valeurs numériques ci-dessous sont calculées, à chaque compilation du manuel, par le moteur de l’application (lavaan `r REF$versions$lavaan`). Elles sont arrondies. Les dernières décimales peuvent varier selon la version du moteur ou la tolérance d’optimisation. Un écart d’effectif, de degrés de liberté ou de version d’indice demande une vérification avant toute interprétation.
+
+Dans le tableau suivant, CFI et RMSEA reprennent les versions privilégiées dans **4. Interpréter** : robustes lorsqu’elles sont disponibles, puis corrigées ou standard selon le cas. HS et Bollen utilisent ici ML standard. SRMR conserve sa version disponible. Il ne faut pas comparer sans mention une valeur standard d’une sortie détaillée à la valeur robuste de ce tableau.
+
+```{r}
+#| label: tbl-reperes
+#| tbl-cap: "Repères des sept jeux réels avec leur modèle préparé. CFI et RMSEA : version reprise dans **4. Interpréter**; SRMR : version standard."
+ids <- c(HolzingerSwineford1939 = "HS", PoliticalDemocracy = "Bollen", lsat6 = "LSAT 6", lsat7 = "LSAT 7",
+         ability = "SAPA", msq_affect = "MSQ", bfi = "BFI")
+d <- do.call(rbind, lapply(names(ids), function(id) {
+  x <- if (id == "HolzingerSwineford1939") REF$hs else REF[[id]]; f <- x$fit
+  data.frame(Jeu = ids[[id]], N = as.integer(x$n), ddl = as.integer(indice(f, "df")),
+             CFI = indice(f, "cfi"), RMSEA = indice(f, "rmsea"), SRMR = indice(f, "srmr"),
+             Version = version(f, "cfi"))
+}))
+tab(d)
+```
+
+## Atelier A
+
+**A1.** `x2` est l’indicateur visuel le moins fortement relié au facteur dans cette analyse, avec une saturation entièrement standardisée de `r v(st("x2"))`. Sa variance expliquée est de `r v(st("x2")^2)`. Cela invite à examiner son contenu et la spécification; il ne s’agit pas d’une consigne de suppression.
+
+**A2.** Le facteur `Texte` possède l’AVE la plus élevée, `r v(VR$AVE[2])`, contre `r v(VR$AVE[1])` pour `Visuel` et `r v(VR$AVE[3])` pour `Vitesse`. Les trois tests verbaux sont ici fortement reliés à leur dimension.
+
+**A3.** Les paramètres peuvent suivre l’organisation attendue alors que les relations entre toutes les paires d’indicateurs ne sont pas suffisamment reproduites. La cohérence de plusieurs saturations ne suffit donc pas à conclure à un bon ajustement global. Le RMSEA standard de `r ix(REF$hs$fit, "rmsea")` et le TLI de `r ix(REF$hs$fit, "tli")` appellent un examen supplémentaire.
+
+**A4.** Une réponse défendable indique que les trois dimensions constituent une organisation interprétable et que la solution est admissible, mais que le modèle simple présente des écarts à approfondir. Une phrase disant « le modèle est confirmé parce que les coefficients sont significatifs » ne répond pas à l’ensemble des résultats.
+
+Le changement entre indicateur de référence et variance factorielle fixée à 1 conserve les relations reproduites et l’ajustement lorsque le modèle est reparamétré correctement. Il modifie l’unité des coefficients non standardisés.
+
+## Atelier B
+
+**B1.** Soixante-quinze observations n’interdisent pas par définition une estimation. Cependant, un petit échantillon peut limiter la précision et la stabilité, particulièrement pour un modèle assez riche. Il faut examiner la convergence, l’admissibilité et l’incertitude, puis discuter la portée des conclusions.
+
+**B2.** La corrélation estimée entre `Democratie60` et `Democratie65` vaut **`r v(PD$cor["Democratie60", "Democratie65"])`**. Les deux ensembles de mesures sont très fortement associés sous ce modèle. Leur proximité temporelle, leurs contenus correspondants et des spécificités non représentées peuvent intervenir. Il serait excessif d’annoncer deux mesures clairement indépendantes.
+
+**B3.** L’AFC estime ici des associations entre trois facteurs; aucune régression causale de démocratie sur industrialisation n’a été spécifiée. Même une régression estimée ne suffirait pas, à elle seule, à établir une causalité.
+
+**B4.** Aucune invariance longitudinale n’est testée. Le fait d’observer les mêmes familles d’indicateurs à deux moments ne démontre pas l’égalité de leurs paramètres de mesure. On ne peut pas interpréter une différence de moyennes latentes comme si cette vérification avait été réalisée.
+
+Le CFI standard de `r ix(PD$fit, "cfi")` et le SRMR de `r ix(PD$fit, "srmr")` peuvent paraître favorables, tandis que le RMSEA de `r ix(PD$fit, "rmsea")` appelle une réserve. Les indices ne sont pas des votes à compter. Le modèle et l’échantillon restent à examiner conjointement.
+
+## Atelier C
+
+**C1.** Les cinq indicateurs sont binaires et déclarés ordinaux. Les tests continus de normalité univariée ne sont pas appliqués à leurs catégories. La note remplace utilement des lignes de tests non applicables.
+
+**C2.** Un CFI de 1 ou un RMSEA de 0 peut apparaître lorsque l’écart estimé est très faible relativement à son repère. Cela ne signifie pas une fiabilité parfaite, une absence de biais de contenu ou une prédiction sans erreur de chaque réponse. Le modèle demeure une représentation à examiner.
+
+**C3.** Les fichiers développent séparément des fréquences de profils. L’ordre des lignes ne fournit pas une clé d’appariement des personnes. Les noms Q1–Q5 identifient des positions d’items dans chaque section, pas une garantie d’identité des questions ou des répondants.
+
+**C4.** Sur LSAT 7, les versions donnent des résultats distincts :
+
+```{r}
+#| label: tbl-lsat7
+#| tbl-cap: "LSAT 7 : trois versions du CFI et du RMSEA pour le même modèle."
+tab(L7$versions)
+```
+
+Une valeur standard de `r v(L7$versions$RMSEA[1])` et une valeur robuste de `r v(L7$versions$RMSEA[3])` du RMSEA peuvent donc provenir du même modèle. Il faut annoncer la version. Le modèle LSAT 6 et le modèle LSAT 7 ne se comparent pas ici par une différence usuelle de chi carré sur les mêmes données.
+
+## Atelier D
+
+**D1.** Les `r ent(AB$lignes)` lignes chargées incluent des réponses manquantes. La stratégie par cas complets sur les seize indicateurs retient `r ent(AB$n)` personnes. Les `r AB$lignes - AB$n` autres lignes ne contribuent pas à cette estimation, sans être supprimées du fichier.
+
+**D2.** Quatre facteurs corrélés ne constituent pas un facteur général de second ordre déjà estimé. Une structure hiérarchique poserait des relations et des restrictions supplémentaires. Elle n’est pas introduite par une simple lecture du nuage de corrélations.
+
+**D3.** Le regroupement empirique réordonne les variables à partir de leurs relations en valeur absolue. Il aide à voir des ensembles, mais ne teste pas à lui seul le modèle à quatre dimensions. Les indices, les paramètres et le contenu demeurent nécessaires.
+
+**D4.** Pour comprendre une réponse ou un item particulier, il faudrait notamment le contenu exact de la question, son barème, la fréquence des catégories, ses relations aux autres items et les conditions de passation. La notice de la source signale des particularités dans certaines tâches de matrices; la connaissance de cette notice doit nuancer l’interprétation d’une faible saturation.
+
+Les indices corrigés disponibles sont globalement favorables dans cet exemple, avec un CFI `r version(AB$fit, "cfi")` de `r ix(AB$fit, "cfi")` et un RMSEA `r version(AB$fit, "rmsea")` de `r ix(AB$fit, "rmsea")`. Cela ne prouve pas que toute utilisation des scores cognitifs serait justifiée.
+
+## Atelier E
+
+**E1.** Les 6 411 lignes de la source complète comportent plusieurs occasions de mesure. Les traiter comme autant de personnes distinctes introduirait une confusion sur l’unité d’analyse. Le sous-ensemble fourni conserve la première occasion pour `r ent(MQ$lignes)` participants.
+
+**E2.** Les omégas élevés n’annulent pas les écarts d’ajustement. La cohérence d’un ensemble d’indicateurs et la reproduction de toutes leurs relations par une structure simple sont des propriétés distinctes.
+
+**E3.** Oméga porte ici sur les réponses latentes continues. Alpha porte sur les scores observés, avec ses propres cas disponibles. Les deux colonnes ne décrivent donc pas exactement la même cible.
+
+**E4.** Une covariance résiduelle demanderait une justification de contenu ou de méthode : synonymie, formulation très proche, situation commune ou autre spécificité défendable. Il faut préciser si l’hypothèse était prévue et vérifier sa portée au-delà de l’échantillon ayant suggéré la modification.
+
+Une conclusion doit inclure le mauvais ajustement du modèle simple selon les indices corrigés et le SRMR. Elle ne doit pas sélectionner seulement le CFI standard favorable pour annoncer que le modèle est validé.
+
+## Atelier F
+
+**F1.** Une saturation négative peut être attendue pour un item orienté en sens inverse, ou dépendre de l’orientation choisie pour le facteur. Il faut lire l’ensemble du groupe et la clé du questionnaire avant de parler d’erreur.
+
+**F2.** Alpha négatif indique ici que la somme brute et les covariances observées ne donnent pas une cohérence interprétable comme une fiabilité positive ordinaire. Transformer cette valeur en zéro ou en valeur absolue masquerait la difficulté de définition et de codage du score.
+
+**F3.** Pour un item noté de 1 à 6, le recodage inversé est $7-X$. Ainsi, 1 devient 6, 2 devient 5 et 3 devient 4. Cette opération devrait être documentée, appliquée au bon item et suivie d’une nouvelle estimation si l’on voulait analyser le score recodé.
+
+**F4.** H porte sur une combinaison à poids optimaux et ne décrit pas la somme brute à poids égaux. On ne peut donc pas citer seulement H pour attribuer sa valeur à cette somme.
+
+Les valeurs de référence avant tout recodage sont :
+
+```{r}
+#| label: tbl-bfi-ref
+#| tbl-cap: "BFI non recodé : fiabilité et AVE par facteur."
+tab(REF$bfi$val$results[, c("Facteur", "Alpha", "Omega", "AVE", "H")])
+```
+
+Le cas montre pourquoi une analyse de fiabilité doit définir son score. Il ne fournit pas une validation du modèle à cinq facteurs, dont les indices corrigés montrent aussi des difficultés.
+
+## Atelier G
+
+**G1.** Trente personnes distinctes ont une cellule vidée dans x2, trente autres dans x5 et trente autres dans x8. Quatre-vingt-dix personnes ont donc au moins une absence parmi les neuf indicateurs : $`r REF$abs$lignes`-90=`r REF$abs$n[["lw"]]`$ cas complets.
+
+**G2.** Chaque personne possède encore plusieurs réponses observées. FIML peut exploiter ces réponses partielles sous les hypothèses du modèle continu retenu, sans imputer une valeur unique dans chaque cellule.
+
+**G3.** Les tests multivariés utilisent un sous-ensemble commun complet et alpha des cas complets par facteur. Les informations disponibles ne sont pas définies de la même manière que dans la vraisemblance FIML.
+
+**G4.** Une différence d’ajustement ne démontre pas le mécanisme MAR. La suppression pédagogique est connue parce que nous l’avons définie; les données observées d’une enquête réelle ne fournissent pas de cette manière les réponses qui auraient été données.
+
+L’appariement des scores doit utiliser `ligne_source` et, lorsque disponible, un identifiant de la base conservé séparément. Le numéro de ligne dans un fichier de scores réduit n’est pas nécessairement le numéro de la personne dans le fichier complet.
+
+## Corrélation de moyennes et corrélation de facteurs
+
+Ce complément ne demande pas de calcul dans l’application. Il illustre une distinction théorique à partir des mêmes données HS :
+
+```{r}
+#| label: tbl-moyennes
+#| tbl-cap: "HS : corrélations entre moyennes d’items observées et corrélations entre facteurs du modèle."
+X <- moteur$cfa_load_example("HolzingerSwineford1939")
+M <- data.frame(Visuel = rowMeans(X[c("x1", "x2", "x3")]), Texte = rowMeans(X[c("x4", "x5", "x6")]), Vitesse = rowMeans(X[c("x7", "x8", "x9")]))
+Rm <- cor(M); C <- REF$hs$cor
+tab(data.frame(Paire = c("Visuel / Texte", "Visuel / Vitesse", "Texte / Vitesse"),
+               Moyennes = Rm[upper.tri(Rm)], Facteurs = C[upper.tri(C)]))
+```
+
+Les moyennes sont calculées sur les groupes x1–x3, x4–x6 et x7–x9. Le modèle factoriel sépare une partie commune et une partie résiduelle sous ses hypothèses; il peut donc conduire à des corrélations différentes de celles des moyennes observées. On ne doit pas conclure qu’un coefficient plus élevé est automatiquement plus vrai dans toute situation : il dépend aussi de la validité du modèle de mesure. Aucun calcul de moyenne d’items n’était un prérequis implicite des premiers exercices.
+
+## Repères de la simulation
+
+Avec quatre indicateurs équivalents et une variance factorielle standardisée à 1, on peut vérifier les cibles sans ordinateur :
+
+```{r}
+om_pop <- function(l, k = 4) (k * l)^2 / ((k * l)^2 + k * (1 - l^2))
+tab(data.frame(`Saturation de population` = c(.4, .7, .9), `AVE de population` = c(.4, .7, .9)^2,
+               `Oméga de la somme` = om_pop(c(.4, .7, .9)), check.names = FALSE))
+```
+
+Ces cibles ne sont pas des résultats à obtenir exactement dans chaque échantillon. Une différence échantillonnale est attendue; elle devient un problème de reproduction seulement lorsque les données, la graine, les paramètres et les réglages annoncés sont censés être strictement identiques.

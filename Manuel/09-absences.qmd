@@ -1,0 +1,144 @@
+# Comprendre et traiter les données manquantes {#sec-absences}
+
+```{r}
+#| include: false
+source("_common.R")
+A <- REF$abs; MQ <- REF$msq_affect; AB <- REF$ability
+fa <- function(k, nom) indice(A$fits[[k]], nom)
+```
+
+::: {.callout-note title="Objectifs du chapitre"}
+- Distinguer les lignes chargées, les observations utilisées et les cas d’un diagnostic.
+- Comparer l’analyse des cas complets et FIML sur un même fichier.
+- Situer les hypothèses MCAR, MAR et MNAR sans prétendre les vérifier par un test.
+- Rédiger une note de méthode qui annonce les absences et leur traitement.
+:::
+
+::: {.callout-tip title="Idée centrale"}
+Le traitement des absences est une hypothèse, pas un correctif. Les cas complets supposent que les personnes retenues représentent bien l’ensemble; FIML suppose que l’absence s’explique par l’information observée. Aucun indice d’ajustement ne dit laquelle de ces hypothèses est vraie.
+:::
+
+## Trois effectifs à distinguer
+
+Le nombre de lignes chargées, le nombre d’observations utilisées pour estimer le modèle et le nombre de cas disponibles pour un diagnostic peuvent différer. L’application conserve ces informations à des endroits différents parce qu’elles répondent à des opérations différentes.
+
+Pour le MSQ, `r ent(MQ$lignes)` lignes sont chargées, mais `r ent(MQ$n)` sont complètes pour les vingt indicateurs du modèle proposé. Pour SAPA, les `r ent(AB$lignes)` lignes donnent `r ent(AB$n)` cas complets sur les seize indicateurs. Une ligne exclue de l’estimation ne disparaît pas du fichier original.
+
+## Cas complets
+
+**Cas complets** utilise les personnes qui possèdent des réponses à tous les indicateurs analysés. La méthode est simple à décrire, mais peut diminuer l’information disponible et modifier la composition de l’échantillon. Ses propriétés dépendent notamment de la manière dont les absences se produisent.
+
+Le simple fait qu’il reste un grand nombre de personnes ne démontre pas que les exclusions sont sans conséquence. Comparez les personnes retenues et non retenues sur les informations disponibles lorsque cette vérification est possible. Documentez les absences par variable et par motif de réponse.
+
+## FIML
+
+**FIML** exploite les informations observées des personnes partiellement renseignées dans une estimation par maximum de vraisemblance. Il ne remplace pas chaque cellule vide par une valeur unique. Dans l’application, il est proposé avec des indicateurs continus et **ML** ou **ML robuste**.
+
+L’approche repose sur des hypothèses concernant le modèle et le mécanisme d’absence, notamment une ignorabilité de type MAR dans les conditions appropriées. MAR signifie que, conditionnellement aux informations observées pertinentes, l’absence ne dépend plus des valeurs manquantes elles-mêmes. Ce mécanisme ne se démontre pas en obtenant une valeur de p favorable à un test de normalité.
+
+| Mécanisme | L’absence dépend… | Cas complets | FIML |
+|---|---|---|---|
+| MCAR | de rien qui soit lié aux variables | sans biais, moins précis | sans biais |
+| MAR | de variables observées | biais possible | sans biais si ces variables sont dans le modèle |
+| MNAR | des valeurs manquantes elles-mêmes | biais possible | biais possible |
+
+MCAR est une hypothèse plus restrictive d’absence complètement aléatoire. MNAR désigne des mécanismes qui dépendent encore de valeurs non observées après conditionnement pertinent. Les données observées seules ne permettent pas de trancher sans hypothèses supplémentaires entre tous ces mécanismes. Une stratégie raisonnable combine connaissance du recueil, examen descriptif et analyses de sensibilité [@enders2010].
+
+FIML requiert ici une structure des moyennes, que l’application active automatiquement avec ce choix. Il ne devient pas une méthode ordinale en présence de catégories simplement parce que celles-ci sont codées numériquement [@lavaanest].
+
+## Exercice avec un fichier dérivé explicite
+
+**But.** Constater la différence entre exclusion complète et utilisation de réponses partielles. Le fichier `HS_absences_pedagogiques.csv` est un dérivé des données HS, fourni dans le dossier `donnees` du complément distribué avec ce manuel. Il ne représente pas un nouveau recueil réel.
+
+Trois séries de trente cellules ont été vidées : `x2` aux lignes de données 1 à 30, `x5` aux lignes 31 à 60, puis `x8` aux lignes 61 à 90. Toutes les autres valeurs et toutes les lignes sont conservées (`r sum(A$na)` cellules vides sur `r A$lignes` lignes). Cette suppression est déterministe; elle ne garantit pas un mécanisme MCAR ou MAR dans une interprétation substantielle.
+
+::: {.content-visible when-format="html"}
+[ Télécharger le fichier dérivé de cet exercice ](data/HS_absences_pedagogiques.csv)
+:::
+
+Si le complément n’a pas été remis, vous pouvez reproduire le fichier sans R. Téléchargez les données HS depuis l’application et ouvrez le CSV dans un tableur en conservant les colonnes d’origine. Avec l’en-tête en ligne 1, videz uniquement les cellules de `x2` aux lignes 2 à 31, de `x5` aux lignes 32 à 61 et de `x8` aux lignes 62 à 91. Dans le fichier complet à quinze colonnes, ces plages sont H2:H31, K32:K61 et N62:N91. Vérifiez d’abord les en-têtes : une réorganisation de colonnes modifierait les lettres. N’effacez aucune ligne entière. Enregistrez une copie CSV sous le nom de l’exercice, avec des cellules réellement vides.
+
+## Première analyse par cas complets
+
+1. Choisissez **Charger un fichier** et ouvrez le CSV dérivé.
+2. Conservez les noms de colonnes en première ligne. Choisissez le séparateur qui reproduit quinze colonnes; la copie fournie utilise la virgule.
+3. Dans le modèle, définissez `Visuel` avec `x1` à `x3`, `Texte` avec `x4` à `x6` et `Vitesse` avec `x7` à `x9`.
+4. Ne déclarez aucun item ordinal. Choisissez **ML**, **λ₁=1** et **Cas complets**.
+5. Estimez et relevez le nombre d’observations utilisées. Téléchargez un premier rapport.
+
+![**Charger un fichier** : le résumé confirme 15 variables, `r A$lignes` observations et `r sum(A$na)` valeurs manquantes. Les pourcentages portent sur l’ensemble des cellules du fichier.](images/app/ch09_import.png){#fig-app-import width=100%}
+
+Vous devez retrouver **`r A$n[["lw"]]` cas complets**. Si vous obtenez un autre nombre, vérifiez les plages de cellules, les variables sélectionnées et l’interprétation des cellules vides.
+
+## Deuxième analyse avec FIML
+
+Conservez exactement le fichier et les indicateurs, choisissez **FIML**, puis estimez de nouveau. Les `r A$n[["fiml"]]` personnes possèdent encore au moins une réponse disponible; l’effectif utilisé est donc de `r A$n[["fiml"]]`. Téléchargez ce second rapport sous un autre nom.
+
+```{r}
+#| label: tbl-absences
+#| tbl-cap: "Le même modèle HS sur trois versions des données : fichier original complet, fichier dérivé par cas complets et fichier dérivé par FIML (ML)."
+d <- data.frame(Traitement = c("Original complet", "Cas complets", "FIML"),
+                N = as.integer(A$n[c("complet", "lw", "fiml")]),
+                CFI = c(fa("complet", "cfi"), fa("lw", "cfi"), fa("fiml", "cfi")),
+                RMSEA = c(fa("complet", "rmsea"), fa("lw", "rmsea"), fa("fiml", "rmsea")),
+                SRMR = c(fa("complet", "srmr"), fa("lw", "srmr"), fa("fiml", "srmr")))
+tab(d)
+```
+
+Ce tableau fournit des repères, pas une compétition entre méthodes. Les indices de la ligne Cas complets et de la ligne FIML ne portent pas sur une information identique. Un SRMR plus faible ne suffit pas à démontrer qu’une hypothèse sur les absences est vraie ou qu’un traitement est automatiquement meilleur.
+
+```{r}
+#| label: fig-absences-sat
+#| fig-cap: "Saturations standardisées des neuf tests selon le traitement des absences. Les trois versions restent proches; les écarts les plus visibles touchent les indicateurs dont des valeurs ont été retirées (x2, x5, x8) et leurs voisins."
+#| fig-height: 3.6
+s <- A$sat
+d <- rbind(data.frame(Item = s$Item, Traitement = "Original complet", Std = s$complet),
+           data.frame(Item = s$Item, Traitement = "Cas complets", Std = s$lw),
+           data.frame(Item = s$Item, Traitement = "FIML", Std = s$fiml))
+d$Traitement <- factor(d$Traitement, levels = c("Original complet", "Cas complets", "FIML"))
+d$Item <- factor(d$Item, levels = rev(s$Item))
+ggplot(d, aes(Std, Item, colour = Traitement, shape = Traitement)) +
+  geom_point(size = 2.8, position = position_dodge(.55)) +
+  scale_colour_manual(values = unname(PAL[c("gris", "orange", "bleu")])) +
+  scale_x_continuous(labels = function(x) v(x, 1)) +
+  labs(x = "Saturation standardisée", y = NULL, colour = NULL, shape = NULL) + theme_manuel()
+```
+
+Comparez aussi les saturations et les erreurs-types. Une différence peut refléter les informations conservées et les hypothèses supplémentaires. Les rapports doivent annoncer à la fois les absences créées et la méthode utilisée.
+
+## Des diagnostics peuvent encore utiliser des cas complets
+
+Même après une estimation FIML, les cinq tests continus de normalité multivariée utilisent le même sous-ensemble complet pour leur comparaison. Alpha utilise des cas complets par facteur : dans l’analyse FIML, N_alpha vaut `r paste(A$val_fiml$results$N_alpha, collapse = ", ")` pour les trois facteurs. Les scores exportés peuvent correspondre à un autre ensemble de lignes, avec la colonne `ligne_source` pour les relier au fichier.
+
+Il est donc normal de rencontrer plusieurs effectifs, à condition de les expliquer. Une mention unique « N = `r A$lignes` partout » serait trompeuse.
+
+## Laboratoire : une note de méthode
+
+Rédigez une note de méthode qui précise l’origine du fichier, les `r sum(A$na)` cellules supprimées, les `r A$n[["lw"]]` cas complets, les `r A$n[["fiml"]]` personnes utilisées par FIML et les limites de cette démonstration. Expliquez pourquoi cet exercice n’établit pas que les absences d’une enquête réelle seraient MAR.
+
+::: {.callout-tip title="Réponse" collapse="true"}
+« Le fichier analysé est une copie des données de Holzinger et Swineford dans laquelle `r sum(A$na)` cellules ont été vidées de façon déterministe (30 valeurs de x2, x5 et x8 chacune, sur des lignes différentes). L’analyse par cas complets retient `r A$n[["lw"]]` élèves sur `r A$lignes`; l’analyse FIML utilise les `r A$n[["fiml"]]` élèves, avec leurs réponses partielles. Les saturations restent proches dans les deux cas (CFI `r v(fa("lw", "cfi"))` et `r v(fa("fiml", "cfi"))`). »
+
+L’exercice ne dit rien du mécanisme d’absence d’une enquête réelle : ici, les cellules ont été retirées par position dans le fichier, par construction. Dans une enquête, l’absence peut dépendre de caractéristiques observées (MAR) ou des valeurs manquantes elles-mêmes (MNAR); seule la connaissance du recueil, aidée d’analyses de sensibilité, permet d’en discuter.
+:::
+
+::: {.callout-important title="À retenir"}
+- Lignes chargées, observations utilisées et cas d’un diagnostic sont trois effectifs différents.
+- Les cas complets perdent de l’information et peuvent biaiser l’échantillon; FIML garde les réponses partielles sous l’hypothèse MAR.
+- Aucun indice d’ajustement ne vérifie le mécanisme d’absence.
+- Une note de méthode annonce les absences, leur traitement et les effectifs de chaque calcul.
+:::
+
+## Quiz
+
+1. Pourquoi l’analyse par cas complets du fichier dérivé retient-elle `r A$n[["lw"]]` élèves ?
+2. FIML impute-t-il une valeur dans chaque cellule vide ?
+3. Peut-on combiner FIML et des items déclarés ordinaux dans l’application ?
+4. Un SRMR plus faible avec FIML prouve-t-il que les absences sont MAR ?
+
+::: {.callout-tip title="Réponses" collapse="true"}
+1. Les trois séries de 30 cellules vides touchent `r A$lignes - A$n[["lw"]]` lignes différentes, qui sont toutes exclues.
+2. Non. Il utilise directement la vraisemblance des valeurs observées de chaque personne.
+3. Non : FIML est réservé ici aux indicateurs continus avec ML ou ML robuste.
+4. Non. L’ajustement ne renseigne pas sur le mécanisme d’absence.
+:::

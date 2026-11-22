@@ -1,0 +1,234 @@
+---
+title: "2. Comprendre les indices"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    fig_width: 7
+    fig_height: 5
+vignette: >
+  %\VignetteIndexEntry{2. Comprendre les indices}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<style>body { font-size: 16px; max-width: 820px; } pre, code { font-size: 14px; }</style>
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning = FALSE)
+options(width = 80)
+v <- function(x, d = 3) sub("^-", "−", formatC(round(x, d), format = "f", digits = d, decimal.mark = ","))
+```
+
+Le rapport de cfadiag affiche une douzaine d'indices. Plusieurs semblent mesurer la même chose et donnent pourtant des valeurs différentes. Cette vignette explique ce que chacun mesure, sur quelle matrice il est calculé et pourquoi les écarts entre eux sont informatifs.
+
+On utilise deux sources d'exemples : le modèle classique de Holzinger et Swineford, et des facteurs construits à la main avec `cfaModel()`, dont on connaît toutes les valeurs.
+
+```{r donnees}
+library(lavaan)
+library(cfadiag)
+HS <- HolzingerSwineford1939
+modele <- "visuel  =~ x1 + x2 + x3
+           verbal  =~ x4 + x5 + x6
+           vitesse =~ x7 + x8 + x9"
+fit <- cfa(modele, data = HS)
+m <- as.cfaModel(fit)
+
+# Un facteur de population, construit à partir de charges standardisées
+un_facteur <- function(charges) {
+  L <- matrix(charges, ncol = 1, dimnames = list(paste0("y", seq_along(charges)), "F"))
+  Sigma <- L %*% t(L); diag(Sigma) <- 1
+  cfaModel(loadings = L, cov_lv = matrix(1, 1, 1, dimnames = list("F", "F")),
+           implied = Sigma, sample = Sigma)
+}
+```
+
+# Quatre fiabilités, quatre questions
+
+La fiabilité d'un score est la part de sa variance qui revient au facteur. Les quatre indices du rapport répondent à cette question pour des scores différents, ou sous des hypothèses différentes.
+
+| Indice | Score visé | Hypothèse |
+|--------|------------|-----------|
+| Oméga | somme brute des indicateurs | modèle factoriel correct |
+| CR (fiabilité composite) | somme des indicateurs standardisés (scores $z$) | modèle factoriel correct |
+| Alpha | somme brute | charges égales (tau-équivalence), aucune covariance résiduelle |
+| H | somme pondérée de façon optimale | modèle factoriel correct |
+
+## Charges égales : tous d'accord
+
+Lorsque les quatre indicateurs ont la même charge, la somme simple est déjà la meilleure pondération. Les quatre indices coïncident.
+
+```{r egales}
+compute_reliability(un_facteur(c(.7, .7, .7, .7)))[, c("omega", "CR", "alpha", "H")]
+```
+
+## Charges inégales : chacun sa réponse
+
+```{r inegales}
+f_ineg <- compute_reliability(un_facteur(c(.9, .8, .5, .3)))
+f_ineg[, c("omega", "CR", "alpha", "H")]
+```
+
+Avec des charges de 0,90 à 0,30, l'alpha (`r v(f_ineg$alpha)`) tombe sous l'oméga (`r v(f_ineg$omega)`) : sans tau-équivalence, il sous-estime la fiabilité de la somme. H (`r v(f_ineg$H)`) est beaucoup plus élevé, car il décrit un autre score, qui donnerait plus de poids à y1 et presque aucun à y4. H n'est donc pas « la vraie fiabilité » du score qu'on utilisera : il indique ce qu'on gagnerait en pondérant. Ici, l'écart entre H et l'oméga dit surtout que y4 apporte peu.
+
+Oméga et CR sont égaux dans ces deux exemples parce que tous les indicateurs ont une variance de 1. Ils diffèrent lorsque les variances diffèrent : l'oméga porte sur la somme des scores bruts, où un indicateur de grande variance pèse plus, la CR sur la somme des scores $z$. Dans Holzinger et Swineford, les variances des neuf tests vont de `r v(min(diag(cov(HS[paste0("x", 1:9)]))), 2)` à `r v(max(diag(cov(HS[paste0("x", 1:9)]))), 2)`, et les deux indices restent très proches.
+
+```{r hs-fiab}
+compute_reliability(m)[, c("facteur", "omega", "CR", "alpha", "H")]
+```
+
+# Variance impliquée ou observée
+
+Le dénominateur de l'oméga est la variance de la somme. On peut la prendre dans le modèle (variance impliquée, défaut de cfadiag) ou dans les données (variance observée, choix de `semTools::compRelSEM()`).
+
+```{r variance}
+imp <- compute_reliability(m)$omega
+obs <- compute_reliability(m, variance = "observee")$omega
+data.frame(facteur = colnames(m$loadings), impliquee = imp, observee = obs)
+```
+
+Les deux définitions coïncident lorsque le modèle reproduit exactement les covariances des indicateurs du facteur. L'écart, faible ici, est le plus grand pour le facteur visuel (`r v(imp[1])` contre `r v(obs[1])`), dont les indicateurs sont les moins bien reproduits. Un écart important entre les deux colonnes est en soi un signal : le modèle de mesure de ce facteur rend mal compte des données.
+
+# Le cas des covariances résiduelles
+
+Ajoutons une covariance résiduelle entre x7 et x8, deux tests de vitesse (addition rapide et comptage rapide de points).
+
+```{r residuelle}
+fit_r <- cfa(paste(modele, "\n x7 ~~ x8"), data = HS)
+m_r <- as.cfaModel(fit_r)
+avant <- compute_reliability(m)[3, c("omega", "alpha", "H")]
+apres <- compute_reliability(m_r)[3, c("omega", "alpha", "H")]
+rbind(sans_covariance = avant, avec_covariance = apres)
+compute_diagnostics(m_r)
+```
+
+Les trois indices réagissent de trois façons différentes, et chacune est instructive.
+
+- **L'oméga baisse** (de `r v(avant$omega)` à `r v(apres$omega)`). Une partie de ce que x7 et x8 partagent est maintenant attribuée à une source qui leur est propre plutôt qu'au facteur vitesse : la charge de x7 tombe à `r v(m_r$loadings["x7", "vitesse"])`. Le numérateur diminue, alors que la covariance résiduelle reste dans la variance de la somme, au dénominateur.
+- **L'alpha ne bouge pas** (`r v(apres$alpha)`). Il ne dépend que des covariances observées et ne sait pas distinguer ce qui vient du facteur de ce qui vient du format. Il compte la covariance résiduelle comme de la variance vraie.
+- **H monte** (de `r v(avant$H)` à `r v(apres$H)`). La pondération optimale exploite la structure des erreurs : en opposant x7 à x8, elle peut annuler une partie de leur erreur commune. Ce score pondéré s'éloigne alors beaucoup de la somme qu'on utilisera. Un H très supérieur à l'oméga, en présence de covariances résiduelles, appelle donc la prudence plutôt que l'enthousiasme.
+
+# Validité convergente : AVE et fiabilité
+
+L'AVE est la moyenne des charges standardisées au carré. Elle décrit les indicateurs un à un ; l'oméga décrit leur somme.
+
+```{r ave}
+f3 <- un_facteur(c(.7, .7, .7))
+compute_validity(f3)$table[, c("facteur", "AVE")]
+compute_reliability(f3)$omega
+```
+
+Trois indicateurs de charge 0,70 donnent une AVE de 0,49, juste sous le repère de 0,50, mais un oméga de `r v(compute_reliability(f3)$omega)`. Additionner des indicateurs moyennement bons produit un score fiable ; c'est tout l'intérêt des échelles. Une AVE faible avec un oméga satisfaisant n'a donc rien de contradictoire : chaque indicateur est imparfait, la somme l'est moins. Avec un seul facteur, MSV, ASV et la comparaison AVE > MSV n'ont pas de sens, et le rapport les déclare non applicables.
+
+# Validité discriminante : trois critères, deux matrices
+
+## MSV, ASV et Fornell–Larcker
+
+Ces trois critères comparent l'AVE de chaque facteur à ses corrélations avec les autres facteurs. cfadiag utilise les corrélations **impliquées** par le modèle, c'est-à-dire les corrélations entre facteurs estimées, corrigées de l'erreur de mesure.
+
+```{r fl}
+val <- compute_validity(m)
+val$table
+round(val$fornell_larcker, 3)
+```
+
+La MSV est le plus grand carré de ces corrélations ; le critère AVE > MSV équivaut donc à demander que la racine de l'AVE, sur la diagonale de la matrice de Fornell–Larcker, dépasse toutes les corrélations de sa ligne.
+
+## HTMT
+
+Le HTMT procède autrement. Il ne passe pas par le modèle : il divise la corrélation moyenne entre indicateurs de deux facteurs différents par la corrélation moyenne entre indicateurs d'un même facteur. Il est calculé sur la matrice de corrélations **observée**, ce qui en fait un contrôle indépendant de l'estimation.
+
+```{r htmt}
+H  <- compute_htmt(m)
+H2 <- compute_htmt(m, type = "htmt2")
+paires <- which(upper.tri(H), arr.ind = TRUE)
+data.frame(paire  = paste(rownames(H)[paires[, 1]], colnames(H)[paires[, 2]], sep = " – "),
+           r_facteurs = m$cor_lv[upper.tri(H)],
+           HTMT  = H[upper.tri(H)],
+           HTMT2 = H2[upper.tri(H)])
+```
+
+Sur ces données, le HTMT reste proche des corrélations entre facteurs, et le HTMT2 un peu en dessous, surtout pour les deux paires qui touchent le facteur visuel. Ces écarts mêlent deux sources : l'inégalité des charges, et les covariances que le modèle reproduit mal, puisque le HTMT voit les données telles qu'elles sont alors que les corrélations entre facteurs passent par le modèle.
+
+Une population construite à la main isole la première source. Deux facteurs corrélés à 0,50 y sont mesurés par des indicateurs de charges très inégales.
+
+```{r htmt-population}
+L <- matrix(0, 6, 2, dimnames = list(paste0("y", 1:6), c("A", "B")))
+L[1:3, "A"] <- c(.9, .6, .4)
+L[4:6, "B"] <- c(.8, .7, .3)
+Phi <- matrix(c(1, .5, .5, 1), 2, dimnames = list(c("A", "B"), c("A", "B")))
+Sigma <- L %*% Phi %*% t(L); diag(Sigma) <- 1
+pop <- cfaModel(loadings = L, cov_lv = Phi, implied = Sigma, sample = Sigma)
+c(HTMT = compute_htmt(pop)[1, 2], HTMT2 = compute_htmt(pop, type = "htmt2")[1, 2])
+```
+
+Le HTMT donne `r v(compute_htmt(pop)[1, 2])` pour une corrélation vraie de 0,50 ; le HTMT2 la retrouve exactement. Avec des charges égales dans chaque facteur, les deux redonneraient 0,50. C'est la raison d'être du HTMT2 : la moyenne géométrique neutralise l'inégalité des charges.
+
+Si le calcul était fait sur la matrice impliquée par le modèle, le HTMT redonnerait à peu près les corrélations entre facteurs et ne contrôlerait plus rien. C'est pour cette raison que cfadiag le calcule sur la matrice observée, et qu'il ne le calcule pas pour deux facteurs qui partagent un indicateur : la corrélation « hétérotrait » y contiendrait des corrélations d'un indicateur avec lui-même.
+
+## Intervalles bootstrap
+
+Les repères usuels du HTMT sont 0,85 (facteurs conceptuellement distincts) et 0,90 (facteurs proches). Comparer une valeur ponctuelle au repère ignore l'incertitude ; la borne supérieure d'un intervalle bootstrap est plus informative.
+
+```{r boot}
+b <- boot_htmt(m, R = 500, seed = 1)
+b$table[, c("facteur1", "facteur2", "htmt", "borne_inf", "borne_sup")]
+```
+
+Le bootstrap rééchantillonne les observations et recalcule les trois HTMT sur le même échantillon à chaque réplication, ce qui préserve leurs dépendances.
+
+# Ajustement global
+
+`compute_fit_indices()` rapporte le chi carré, le CFI, le TLI, le RMSEA avec son intervalle à 90 % et le SRMR. Avec un estimateur robuste (MLR, WLSMV), les versions corrigées remplacent les versions standard, et la colonne `version` le signale.
+
+```{r ajustement}
+fit_mlr <- cfa(modele, data = HS, estimator = "MLR")
+ind <- compute_fit_indices(fit_mlr)
+ind$valeur <- round(ind$valeur, 3)
+ind[, c("indice", "valeur", "version", "atteint")]
+```
+
+Les repères par défaut viennent de Hu et Bentler (1999). Ils ont été établis dans des conditions particulières et ne séparent pas un bon d'un mauvais modèle ; ils se modifient avec l'argument `reperes`. Pour un modèle juste identifié (0 dl), l'ajustement est parfait par construction et les repères ne sont pas évalués.
+
+# Concordance avec semTools
+
+```{r semtools-test, include = FALSE}
+a_semtools <- requireNamespace("semTools", quietly = TRUE)
+```
+
+```{r semtools, eval = a_semtools}
+semTools::compRelSEM(fit)                          # oméga, variance observée
+compute_reliability(m, variance = "observee")$omega
+semTools::compRelSEM(fit, tau.eq = TRUE)           # alpha
+compute_reliability(m)$alpha
+semTools::htmt(modele, HS)                         # HTMT
+```
+
+Avec `variance = "observee"`, l'oméga de cfadiag redonne celui de `compRelSEM()` ; l'alpha et le HTMT concordent également. L'AVE n'est pas comparée : cfadiag utilise la moyenne des charges standardisées au carré (Fornell et Larcker, 1981), alors que la fonction `AVE()` de semTools repose sur une autre définition, décrite dans sa documentation. Pour des indicateurs ordinaux, `compRelSEM()` porte par défaut sur la somme des codes observés, cfadiag sur les réponses sous-jacentes (voir la vignette « Données imparfaites »).
+
+# En résumé
+
+| Indice | Ce qu'il mesure | Matrice | Repère usuel |
+|--------|-----------------|---------|--------------|
+| Oméga | fiabilité de la somme brute | modèle (ou observée) | 0,70 |
+| CR | fiabilité de la somme des scores $z$ | modèle (ou observée) | 0,70 |
+| Alpha | fiabilité de la somme, sous tau-équivalence | observée | 0,70 |
+| H | fiabilité de la somme pondérée optimale | modèle | 0,70 |
+| AVE | part moyenne de variance expliquée par indicateur | modèle | 0,50 |
+| MSV, ASV, Fornell–Larcker | recouvrement entre facteurs | modèle (corrélations impliquées) | inférieur à l'AVE |
+| HTMT, HTMT2 | recouvrement entre facteurs, sans passer par le modèle | observée | 0,85 ou 0,90 |
+
+Quand les indices s'accordent, le diagnostic est simple. Quand ils divergent, l'écart a presque toujours une explication : des charges inégales (alpha < oméga < H), un modèle qui reproduit mal un bloc (oméga impliqué ≠ oméga observé), des erreurs corrélées (alpha stable, oméga en baisse, H en hausse), ou des indicateurs moyens dont la somme reste fiable (AVE faible, oméga correct).
+
+# Références
+
+Fornell, C. et Larcker, D. F. (1981). Evaluating structural equation models with unobservable variables and measurement error. *Journal of Marketing Research*, 18(1), 39–50.
+
+Hancock, G. R. et Mueller, R. O. (2001). Rethinking construct reliability within latent variable systems. Dans R. Cudeck, S. du Toit et D. Sörbom (dir.), *Structural equation modeling: Present and future* (p. 195–216). Scientific Software International.
+
+Henseler, J., Ringle, C. M. et Sarstedt, M. (2015). A new criterion for assessing discriminant validity in variance-based structural equation modeling. *Journal of the Academy of Marketing Science*, 43(1), 115–135.
+
+Hu, L. et Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance structure analysis. *Structural Equation Modeling*, 6(1), 1–55.
+
+McDonald, R. P. (1999). *Test theory: A unified treatment*. Lawrence Erlbaum.
+
+Roemer, E., Schuberth, F. et Henseler, J. (2021). HTMT2 – An improved criterion for assessing discriminant validity in structural equation modeling. *Industrial Management & Data Systems*, 121(12), 2637–2650.

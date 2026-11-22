@@ -1,0 +1,12 @@
+| Facteur 1 | Facteur 2 | Corrélation |
+| --- | --- | --- |
+| Conscience | Agreabilite | -0,371 |
+| Extraversion | Agreabilite | 0,701 |
+| Neuroticisme | Agreabilite | 0,249 |
+| Ouverture | Agreabilite | -0,303 |
+| Extraversion | Conscience | -0,393 |
+| Neuroticisme | Conscience | -0,308 |
+| Ouverture | Conscience | 0,334 |
+| Neuroticisme | Extraversion | 0,288 |
+| Ouverture | Extraversion | -0,487 |
+| Ouverture | Neuroticisme | -0,133 |

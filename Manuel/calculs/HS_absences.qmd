@@ -1,0 +1,5 @@
+| Traitement | N | CFI | SRMR |
+| --- | --- | --- | --- |
+| Original complet | 301 | 0,931 | 0,065 |
+| Cas complets | 211 | 0,924 | 0,071 |
+| FIML | 301 | 0,924 | 0,061 |

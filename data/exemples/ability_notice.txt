@@ -1,0 +1,22 @@
+SAPA / ability — 1 525 personnes, 16 items cognitifs
+Seize items cognitifs binaires du projet SAPA : raisonnement, séries de lettres, matrices et rotations spatiales (collecte d’août 2012).
+
+Quatre aptitudes corrélées rendent-elles compte des réponses aux seize items ?
+
+reason.* : raisonnement verbal; letter.* : séries de lettres
+matrix.* : raisonnement matriciel; rotate.* : rotation spatiale
+0 = incorrect; 1 = correct; cellules vides = données manquantes
+
+La structure à quatre facteurs corrélés est proposée comme point de départ; aucun facteur général de second ordre n’est ajouté. WLSMV et cas complets : des lignes sont exclues, sans imputation des réponses manquantes. La documentation signale des particularités dans certains items de matrices.
+
+Préparation : Copie des 1 525 × 16 réponses de psychTools::ability, sans imputation ni recodage.
+Source : psychTools
+Condon, D. M. et Revelle, W. (2014). The International Cognitive Ability Resource: Development and initial validation of a public-domain measure. Intelligence, 43, 52–64. Voir aussi la notice ability pour l’échantillon SAPA.
+https://search.r-project.org/CRAN/refmans/psychTools/html/ability.html
+
+Estimateur proposé : WLSMV
+Modèle de départ :
+Raisonnement =~ reason.4 + reason.16 + reason.17 + reason.19
+Lettres =~ letter.7 + letter.33 + letter.34 + letter.58
+Matrices =~ matrix.45 + matrix.46 + matrix.47 + matrix.55
+Rotation =~ rotate.3 + rotate.4 + rotate.6 + rotate.8

@@ -1,0 +1,110 @@
+# Ateliers guidés sur les données réelles {#sec-ateliers}
+
+```{r}
+#| include: false
+source("_common.R")
+```
+
+::: {.callout-note title="Comment utiliser ces ateliers"}
+Sept ateliers, un par jeu de données, reprennent les notions des chapitres précédents dans une situation complète. Chacun précise les données, la question, les réglages, les étapes, les questions et la production attendue. Les corrigés sont réunis dans l’annexe des corrigés : rédigez d’abord vos réponses.
+:::
+
+Chaque atelier peut être repris indépendamment. Commencez par **Données réelles**, sélectionnez le fichier indiqué et cliquez sur **Charger cet exemple et son modèle**. Ce point de départ évite de conserver d’anciennes associations ou contraintes. Les corrigés sont réunis dans l’annexe correspondante; prenez d’abord vos propres notes.
+
+Les productions demandées sont des rapports HTML et de courts commentaires. Vous n’avez pas à produire de syntaxe R ou à accéder au projet source du manuel.
+
+## Atelier A sur les aptitudes cognitives
+
+**Données.** Holzinger–Swineford, `r ent(REF$hs$n)` élèves, neuf indicateurs. **Question.** La structure à trois aptitudes paraît-elle défendable, et avec quelles limites ? **Réglages.** Trois facteurs préparés, ML, λ₁=1, cas complets, aucun item ordinal, aucune covariance résiduelle ajoutée.
+
+1. Vérifiez les groupes `x1`–`x3`, `x4`–`x6`, `x7`–`x9`, puis estimez.
+2. Relevez l’effectif, les degrés de liberté et les saturations entièrement standardisées.
+3. Consultez l’ajustement, la fiabilité et les corrélations factorielles.
+4. Téléchargez le rapport avant toute modification.
+
+**Questions.** A1. Quel indicateur visuel paraît le moins fortement relié à son facteur ? A2. Quel facteur présente l’AVE la plus élevée ? A3. Les paramètres et l’ajustement conduisent-ils exactement au même jugement ? A4. Quelle conclusion provisoire tient compte des deux ?
+
+**Production.** Un rapport et un commentaire de 200 à 300 mots, sans suppression d’item fondée sur un seuil isolé.
+
+## Atelier B sur la démocratie politique
+
+**Données.** Démocratie politique de Bollen, `r REF$PoliticalDemocracy$n` pays et onze indicateurs. **Question.** Que signifie distinguer deux mesures de démocratie à deux moments tout en les trouvant très fortement liées ? **Réglages.** Les trois facteurs préparés, ML, λ₁=1, cas complets, indicateurs traités comme continus.
+
+Le modèle comprend `Democratie60` avec `y1` à `y4`, `Democratie65` avec `y5` à `y8` et `Industrialisation` avec `x1` à `x3`. Il ne contient ni les régressions du modèle structurel de Bollen ni une analyse d’invariance longitudinale. Les mêmes types d’indicateurs sont observés aux deux moments; une spécificité de mesure commune peut donc demeurer.
+
+1. Chargez et estimez ce modèle sans modification.
+2. Relevez la corrélation entre les deux facteurs de démocratie.
+3. Comparez le CFI, le RMSEA et le SRMR.
+4. Consultez le panneau de validité discriminante et examinez les limites de sa lecture.
+
+**Questions.** B1. L’effectif de `r REF$PoliticalDemocracy$n` interdit-il automatiquement toute estimation ? B2. Que suggère une corrélation factorielle proche de 1 ? B3. Pourquoi ne peut-on pas conclure ici à une influence causale de l’industrialisation ? B4. Peut-on annoncer que le changement de démocratie entre 1960 et 1965 a été mesuré de manière invariante ?
+
+**Production.** Une page distinguant explicitement estimation, précision, distinction des mesures et absence d’un modèle causal ou d’invariance testé.
+
+## Atelier C sur deux sections du LSAT
+
+**Données.** LSAT 6 et LSAT 7, analysés séparément, `r ent(REF$lsat6$n)` observations et cinq items chacun. **Question.** Un modèle simple peut-il donner des diagnostics différents sur deux séries de réponses binaires ? **Réglages.** Un facteur `Aptitude`, Q1 à Q5, cinq items ordinaux, WLSMV, cas complets.
+
+1. Estimez LSAT 6 et conservez son rapport.
+2. Chargez ensuite LSAT 7 et son modèle préparé; estimez-le.
+3. Vérifiez l’effectif et les cinq degrés de liberté dans chaque cas.
+4. Relevez les indices avec leur version, puis comparez les deux ensembles descriptivement.
+
+**Questions.** C1. Pourquoi le tableau de normalité univariée est-il remplacé par une note ? C2. Un CFI de 1 et un RMSEA de 0 démontrent-ils une mesure parfaite ? C3. Pourquoi ne faut-il pas fusionner les fichiers ligne par ligne ? C4. Quelle différence de version pourrait expliquer deux RMSEA différents pour LSAT 7 ?
+
+**Production.** Deux rapports et un tableau de comparaison qui nomme les versions Standard, Scaled ou Robust. Aucun test de différence entre ces deux échantillons distincts n’est demandé.
+
+## Atelier D sur les seize items cognitifs SAPA
+
+**Données.** SAPA / ability, `r ent(REF$ability$lignes)` personnes et seize réponses binaires. **Question.** Quelle organisation de premier ordre décrit les quatre familles de tâches ? **Réglages.** Quatre facteurs préparés, seize items ordinaux, WLSMV, cas complets.
+
+Les groupes sont `reason.*` pour le raisonnement, `letter.*` pour les séries de lettres, `matrix.*` pour les matrices et `rotate.*` pour les rotations. Les astérisques utilisés ici signifient « les variables de ce groupe », pas un caractère à saisir : le modèle préparé sélectionne les noms exacts.
+
+1. Vérifiez quatre items dans chacun des quatre facteurs.
+2. Estimez et relevez les `r ent(REF$ability$n)` cas complets.
+3. Comparez les saturations et les corrélations entre facteurs.
+4. Ouvrez la carte des corrélations, puis comparez l’ordre des facteurs et l’ordre empirique.
+
+**Questions.** D1. Pourquoi l’effectif estimé diffère-t-il de l’effectif chargé ? D2. Des facteurs corrélés constituent-ils déjà un facteur général de second ordre ? D3. Le regroupement empirique de la carte suffit-il à valider les quatre dimensions ? D4. Quelle information supplémentaire faudrait-il pour discuter une réponse atypique à un item de matrices ?
+
+**Production.** Un rapport et un schéma conceptuel des quatre dimensions, sans ajouter de facteur général non estimé. La notice de la source souligne certaines particularités des items de matrices : utilisez-la pour nuancer votre commentaire.
+
+## Atelier E sur les états affectifs MSQ
+
+**Données.** MSQ, vingt adjectifs, première occasion de mesure pour `r ent(REF$msq_affect$lignes)` participants. **Question.** Peut-on obtenir une forte fiabilité et un modèle globalement mal ajusté ? **Réglages.** Deux facteurs préparés, dix indicateurs chacun, vingt items ordinaux, WLSMV, cas complets.
+
+1. Vérifiez les vingt indicateurs et estimez sur les `r ent(REF$msq_affect$n)` cas complets.
+2. Consultez **4. Interpréter** et notez les versions du CFI et du RMSEA.
+3. Comparez ces résultats aux colonnes de la sortie détaillée.
+4. Relevez oméga et AVE, puis examinez les signaux sans modifier le modèle.
+
+**Questions.** E1. Pourquoi n’utilise-t-on pas les 6 411 lignes du fichier MSQ complet de la source ? E2. Un oméga élevé résout-il les difficultés d’ajustement ? E3. Quelle cible décrit cet oméga ordinal ? E4. Quelles justifications seraient nécessaires avant d’ajouter des liens résiduels entre adjectifs proches ?
+
+**Production.** Une conclusion argumentée distinguant distribution ordinale, répétitions de mesure, fiabilité et ajustement. L’étude complète suivante approfondit cet exemple.
+
+## Atelier F sur la personnalité et les items inversés
+
+**Données.** BFI / SAPA, `r ent(REF$bfi$lignes)` personnes et vingt-cinq items. **Question.** Pourquoi certains coefficients de fiabilité de la somme brute peuvent-ils être très faibles malgré des liens factoriels substantiels ? **Réglages.** Cinq facteurs préparés, cinq items chacun, déclarations ordinales, WLSMV, cas complets, aucun recodage.
+
+1. Estimez le modèle préparé et vérifiez les `r ent(REF$bfi$n)` cas complets.
+2. Examinez les signes des saturations par groupe.
+3. Consultez les indices de fiabilité et relisez les clés des items orientés en sens inverse.
+4. Comparez la cible de la somme brute à celle de H et à celle d’une somme qui serait recodée.
+
+**Questions.** F1. Une saturation négative constitue-t-elle toujours une erreur ? F2. Pourquoi une valeur négative d’alpha ne doit-elle pas être transformée arbitrairement en zéro ou en valeur absolue ? F3. Quel serait le recodage d’un item inversé de 1 à 6 ? F4. Peut-on déclarer la somme brute fiable en citant seulement H ?
+
+**Production.** Une note expliquant le rôle du codage. Aucun recodage n’est demandé dans l’application : l’activité porte précisément sur le fichier original. Ces données IPIP/SAPA ne sont pas le Big Five Inventory d’Oliver John, malgré le nom abrégé du fichier.
+
+## Atelier G sur les réponses partielles
+
+**Données.** `HS_absences_pedagogiques.csv`, dont la provenance et l’accès sont détaillés dans le chapitre sur les absences. **Question.** Que conserve-t-on et que suppose-t-on avec FIML ? **Réglages.** Modèle HS à trois facteurs, indicateurs continus, ML, puis comparaison des cas complets et de FIML.
+
+1. Importez le fichier dérivé et vérifiez ses en-têtes.
+2. Reconstituez les trois groupes HS avec leurs noms.
+3. Estimez par cas complets et conservez le rapport.
+4. Changez uniquement la gestion des absences pour FIML, estimez et conservez un second rapport.
+5. Exportez les scores et repérez `ligne_source`.
+
+**Questions.** G1. Pourquoi obtient-on `r REF$abs$n[["lw"]]` cas complets ? G2. Pourquoi FIML peut-il conserver les `r REF$abs$n[["fiml"]]` personnes de ce fichier ? G3. Pourquoi les tests multivariés de normalité et alpha peuvent-ils afficher d’autres effectifs ? G4. Une meilleure valeur d’un indice prouve-t-elle que les absences seraient MAR ?
+
+**Production.** Deux rapports, une note de méthode et une explication de l’appariement des scores au fichier d’origine.

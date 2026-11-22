@@ -1,0 +1,8 @@
+
+Chi-Squared Difference Test
+
+   Df    AIC    BIC   Chisq Chisq diff    RMSEA Df diff Pr(>Chisq)   
+f  24 7517.5 7595.3  85.305                                          
+ft 30 7527.6 7583.2 107.411     22.105 0.094433       6   0.001159 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

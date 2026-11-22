@@ -1,0 +1,28 @@
+Package: cfadiag
+Type: Package
+Title: Diagnostics de fiabilité et de validité pour l'analyse
+        factorielle confirmatoire
+Version: 0.2.3
+Authors@R: person("Daniel", "Coulombe", role = c("aut", "cre"),
+    email = "a-remplacer@example.org")
+Description: Rapport de diagnostic pour des modèles de mesure estimés avec
+    'lavaan' : oméga congénérique, alpha, coefficient H, variance moyenne
+    extraite, MSV et ASV, critère de Fornell-Larcker, rapport
+    hétérotrait-monotrait (HTMT et HTMT2) avec intervalles bootstrap, indices
+    d'ajustement comparés à des repères conventionnels et signaux d'alerte
+    sur la solution. Fonctionne avec des données brutes, des matrices de
+    covariances, des données manquantes (FIML), des indicateurs ordinaux,
+    des modèles structuraux et des modèles multigroupes.
+License: GPL-3
+Encoding: UTF-8
+Language: fr
+Depends: R (>= 4.1.0)
+Imports: lavaan (>= 0.6-12), graphics, grDevices, stats
+Suggests: testthat (>= 3.0.0), semTools, knitr, rmarkdown
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+RoxygenNote: 7.3.2
+NeedsCompilation: no
+Packaged: 2026-11-20 15:53:52 UTC; root
+Author: Daniel Coulombe [aut, cre]
+Maintainer: Daniel Coulombe <a-remplacer@example.org>

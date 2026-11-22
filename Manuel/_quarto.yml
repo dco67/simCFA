@@ -1,0 +1,76 @@
+project:
+  type: book
+  output-dir: _book
+  resources:
+    - data/**
+    - ressources/**
+book:
+  title: "Analyse factorielle confirmatoire"
+  subtitle: "Comprendre et pratiquer avec l’application CFA"
+  author: "Daniel Coulombe"
+  date: "2026-11-20"
+  output-file: Manuel_CFA
+  cover-image: cover.png
+  downloads: [pdf, epub]
+  chapters:
+    - index.qmd
+    - 01-mesurer.qmd
+    - 02-interface.qmd
+    - 03-premiere-afc.qmd
+    - 04-ajustement.qmd
+    - 05-diagnostics.qmd
+    - 06-fiabilite.qmd
+    - 07-validite.qmd
+    - 08-ordinal.qmd
+    - 09-absences.qmd
+    - 10-contraintes.qmd
+    - 11-simulation.qmd
+    - 12-scores-rapport.qmd
+    - 13-ateliers.qmd
+    - 14-etude.qmd
+    - references.qmd
+  appendices:
+    - A-donnees.qmd
+    - B-corriges.qmd
+    - C-depannage.qmd
+    - D-glossaire.qmd
+date-format: "D MMMM YYYY"
+lang: fr
+bibliography: references.bib
+link-citations: true
+number-sections: true
+toc: true
+execute:
+  echo: false
+  warning: false
+  message: false
+  freeze: auto
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc-depth: 2
+    code-copy: false
+    html-math-method: mathml
+    link-external-newwindow: true
+  pdf:
+    documentclass: scrreprt
+    pdf-engine: lualatex
+    papersize: a4
+    fontsize: 11pt
+    geometry: margin=23mm
+    mainfont: DejaVu Serif
+    sansfont: DejaVu Sans
+    monofont: DejaVu Sans Mono
+    include-in-header: preamble.tex
+    include-before-body: cover.tex
+    colorlinks: true
+    callout-icon: false
+    toc-depth: 1
+    fig-pos: htbp
+    keep-tex: true
+    filters: [filtres/tableaux.lua]
+  epub:
+    toc-depth: 2
+    css: styles.css
+    cover-image: cover.png

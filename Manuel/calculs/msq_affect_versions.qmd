@@ -1,0 +1,5 @@
+| Version | CFI | RMSEA |
+| --- | --- | --- |
+| Standard | 0,953 | 0,115 |
+| Scaled | 0,908 | 0,103 |
+| Robust | 0,760 | 0,152 |

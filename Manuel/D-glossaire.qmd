@@ -1,0 +1,115 @@
+# Glossaire des termes utilisés {#sec-glossaire}
+
+**Admissibilité.** Ensemble de vérifications concernant la possibilité d’interpréter la solution dans le cadre du modèle, notamment l’absence de certaines variances négatives ou matrices impossibles. Elle ne démontre pas l’ajustement ni la validité substantielle.
+
+**AFC.** Analyse factorielle confirmatoire. Modèle qui spécifie les relations entre des variables latentes et leurs indicateurs, puis examine leur compatibilité avec les données.
+
+**Alpha.** Coefficient calculé à partir des covariances des scores observés. Son interprétation comme fiabilité requiert des hypothèses; sa valeur ne prouve pas l’unidimensionnalité.
+
+**Analyse enregistrée.** Résultat de la dernière estimation. Les résultats, le rapport et les exports la décrivent tant qu’une nouvelle estimation ne l’a pas remplacée, même si les contrôles affichent d’autres réglages.
+
+**AVE.** Variance moyenne extraite. Dans une structure simple, proportion moyenne de variance des indicateurs attribuée au facteur; elle ne se confond pas avec la fiabilité de leur somme.
+
+**Bootstrap.** Rééchantillonnage avec remise des observations pour estimer la variabilité d’un indice. L’application l’utilise pour les intervalles percentile du HTMT et du HTMT2.
+
+**Cas complets.** Personnes disposant de toutes les valeurs requises pour une opération donnée. L’ensemble peut changer selon les indicateurs et selon le diagnostic.
+
+**Catégorie ordonnée.** Modalité dont la position est ordonnée par rapport aux autres, sans que les distances entre modalités soient nécessairement des unités égales.
+
+**CFI.** Indice comparatif d’ajustement, interprété relativement à un modèle de comparaison. Il n’est pas un pourcentage d’items valides.
+
+**Convergence.** Arrêt de l’algorithme selon ses critères de recherche d’une solution. Elle est nécessaire mais insuffisante pour conclure à la qualité d’un modèle.
+
+**Corrélation factorielle.** Association standardisée entre deux variables latentes sous le modèle estimé. Elle dépend des hypothèses de mesure.
+
+**Corrélation polychorique.** Estimation d’une relation entre réponses latentes continues à partir de catégories ordinales, sous un modèle de seuils et ses hypothèses.
+
+**Corrélation polyseriale.** Relation estimée entre une variable continue et la réponse latente associée à une variable ordinale, sous les hypothèses correspondantes.
+
+**Covariance résiduelle.** Relation entre parties d’indicateurs non expliquées par les facteurs. Elle peut représenter une spécificité commune de contenu ou de méthode.
+
+**CR.** Composite reliability. Dans cette application, CR reprend la même quantité qu’oméga pour la somme définie par le codage analysé.
+
+**Degrés de liberté.** Différence pertinente entre l’information statistique disponible et les paramètres libres dans un modèle identifié. Un simple comptage positif ne prouve pas toute l’identification.
+
+**Distance de Mahalanobis.** Distance d’une observation au centre des données, tenant compte des variances et des corrélations. Sa version robuste (MCD) estime ce centre sans se laisser influencer par les observations éloignées.
+
+**DWLS.** Estimation par moindres carrés pondérés diagonalement. WLSMV utilise cette base d’estimation avec des corrections supplémentaires des erreurs-types et du test.
+
+**EPC.** Changement de paramètre attendu associé à une libération de restriction, dans une approximation locale. Il complète l’indice de modification.
+
+**Erreur-type.** Quantification de la variabilité d’échantillonnage estimée d’un coefficient selon la méthode utilisée. Elle ne mesure pas directement toutes les formes d’erreur de mesure d’un instrument.
+
+**Facteur.** Variable latente proposée pour représenter une source commune de variation d’indicateurs. Une étiquette ne suffit pas à en établir le sens.
+
+**FIML.** Maximum de vraisemblance à information complète. Exploite les parties observées de réponses incomplètes sous les hypothèses retenues, sans imputation unique de chaque absence.
+
+**Fornell–Larcker (critère de).** Comparaison de la racine carrée de l’AVE de chaque facteur avec ses corrélations aux autres facteurs, en valeur absolue.
+
+**Graine.** Valeur qui initialise le générateur aléatoire pour permettre la reproduction d’une simulation ou d’un bootstrap dans un environnement donné.
+
+**H.** Coefficient lié à une combinaison à poids optimaux selon le modèle. Il ne décrit pas automatiquement une somme à poids égaux.
+
+**HTMT.** Rapport de corrélations entre ensembles d’indicateurs et à l’intérieur de ces ensembles, utilisé comme élément d’examen de la distinction des facteurs.
+
+**HTMT2.** Variante utilisant des moyennes géométriques. Il ne constitue pas un diagnostic indépendant du HTMT.
+
+**Identification.** Possibilité de déterminer les paramètres visés à partir des informations et restrictions du modèle. Elle inclut le choix d’une échelle pour les facteurs.
+
+**Indicateur de référence.** Indicateur dont une saturation est fixée pour donner une échelle au facteur. Son coefficient fixé ne prouve pas une mesure parfaite.
+
+**Indice de modification.** Approximation locale d’une amélioration possible du chi carré si une restriction était libérée. Il ne fournit pas la justification théorique d’une modification.
+
+**Intercept.** Valeur attendue d’un indicateur continu lorsque les facteurs qui le prédisent prennent la valeur de référence zéro dans le modèle.
+
+**ligne_source.** Colonne de l’export des scores factoriels qui donne la position de chaque personne dans le fichier chargé, hors en-tête.
+
+**MAR.** Hypothèse selon laquelle l’absence ne dépend plus des valeurs manquantes après conditionnement sur les informations observées pertinentes. Elle requiert un raisonnement sur le recueil et le modèle.
+
+**MCAR.** Hypothèse d’absence complètement aléatoire, plus restrictive que MAR dans les usages usuels de ces termes.
+
+**ML.** Maximum de vraisemblance. Méthode d’estimation choisie dans plusieurs exercices continus de ce manuel.
+
+**MLR.** Variante de maximum de vraisemblance avec erreurs-types et test robustes dans le moteur utilisé. Elle ne répare pas une mauvaise structure de mesure.
+
+**MNAR.** Mécanisme pour lequel l’absence dépend encore d’informations non observées après conditionnement pertinent. Son analyse demande des hypothèses supplémentaires.
+
+**Modèle imbriqué.** Modèle plus restrictif obtenu en ajoutant des contraintes à un modèle de référence. Un test de différence ordinaire demande aussi ses conditions de validité.
+
+**Modèle juste identifié.** Modèle identifié à zéro degré de liberté. La reproduction exacte ne fournit pas un test global informatif de la structure.
+
+**MSV et ASV.** Plus grand carré (MSV) et moyenne des carrés (ASV) des corrélations d’un facteur avec les autres facteurs; on les compare à l’AVE.
+
+**N_alpha.** Nombre de cas complets utilisés pour calculer alpha sur les indicateurs d’un facteur.
+
+**Oméga.** Coefficient de fiabilité fondé sur un modèle et un score défini. Dans l’application, il vise la somme dans le codage analysé; en ordinal, la cible porte sur les réponses latentes continues.
+
+**Parallélisme.** Restriction d’égalité des saturations et des variances résiduelles des indicateurs d’un même facteur.
+
+**Paramètre libre.** Paramètre estimé à partir des données plutôt que fixé par convention ou restriction.
+
+**Réponse latente.** Quantité continue supposée sous-jacente à une réponse catégorielle dans un modèle ordinal à seuils.
+
+**Résidu.** Partie d’un indicateur non expliquée par les facteurs du modèle. Le terme peut aussi désigner un écart entre relation observée et reproduite; le contexte et l’unité doivent être précisés.
+
+**RMSEA.** Indice d’écart d’ajustement approximatif tenant compte des degrés de liberté. Il s’interprète avec son intervalle et les conditions de l’analyse.
+
+**Saturation.** Coefficient reliant un facteur à un indicateur. Les versions non standardisée, standardisée sur les facteurs et entièrement standardisée n’ont pas la même unité.
+
+**Score factoriel.** Prédiction individuelle d’une position factorielle, dépendant du modèle et d’une méthode d’estimation des scores.
+
+**Seuil ordinal.** Frontière entre catégories dans le modèle d’une réponse latente. Il ne s’agit pas d’un seuil de diagnostic individuel.
+
+**SRMR.** Résumé d’écarts standardisés entre relations observées et reproduites. Une faible moyenne n’exclut pas tout écart local important.
+
+**Standardisation.** Changement d’échelle destiné à exprimer des coefficients relativement à des dispersions de référence. Elle ne transforme pas un indicateur mal défini en bonne mesure.
+
+**Tau-équivalence essentielle.** Restriction d’égalité des saturations non standardisées dans le cadre discuté. Elle n’est pas l’égalité automatique de tous les coefficients entièrement standardisés.
+
+**TLI.** Indice d’ajustement comparatif qui prend en compte la complexité d’une manière différente du CFI. Il doit être lu avec les autres indices.
+
+**Validité.** Argumentation reliant les observations et les scores à leur interprétation et à leur usage. Un seuil d’ajustement ou de fiabilité ne suffit pas à l’établir.
+
+**Version d’un indice.** Forme standard, *scaled* ou *robust* d’un même indice d’ajustement; les versions corrigées tiennent compte de l’estimateur robuste.
+
+**WLSMV.** Estimation fondée sur DWLS avec corrections robustes d’erreurs-types et du test, retenue ici pour les indicateurs binaires et ordinaux.

@@ -1,0 +1,116 @@
+# Données et accès aux fichiers {#sec-donnees}
+
+```{r}
+#| include: false
+source("_common.R")
+```
+
+## Deux accès complémentaires
+
+Pour les données originales, utilisez **Données réelles → Données CSV** dans l’application. La **Notice et modèle** conserve les informations nécessaires pour travailler hors de la session. Les noms ci-dessous servent à identifier les fichiers, mais vous n’avez pas à ouvrir un dossier du code de l’application.
+
+Le complément **CFA_donnees_et_activites.zip** doit être remis avec les éditions PDF ou EPUB si l’on souhaite réaliser l’exercice sur les absences à partir du fichier déjà préparé. Il contient un dossier `donnees`, un dossier `notices` et une note de provenance. Les autres ateliers restent directement réalisables avec les données intégrées à l’application.
+
+::: {.content-visible when-format="html"}
+[ Télécharger l’ensemble des fichiers et notices ](data/CFA_donnees_et_activites.zip)
+:::
+
+## Résumé des effectifs
+
+```{r}
+#| label: tbl-effectifs
+#| tbl-cap: "Effectifs des jeux de données avec leur modèle préparé."
+ids <- c(HolzingerSwineford1939 = "Holzinger–Swineford", PoliticalDemocracy = "Démocratie politique",
+         lsat6 = "LSAT 6", lsat7 = "LSAT 7", ability = "SAPA / ability", msq_affect = "MSQ affect", bfi = "BFI / SAPA")
+d <- do.call(rbind, lapply(names(ids), function(id) {
+  x <- if (id == "HolzingerSwineford1939") list(n = REF$hs$n, lignes = REF$hs$n) else REF[[id]]
+  data.frame(Jeu = ids[[id]], `Lignes chargées` = as.integer(x$lignes),
+             Indicateurs = length(unlist(CATALOGUE[[id]]$factors)), `Cas complets du modèle` = as.integer(x$n), check.names = FALSE)
+}))
+d <- rbind(d, data.frame(Jeu = "HS avec absences pédagogiques", `Lignes chargées` = as.integer(REF$abs$lignes),
+  Indicateurs = 9L, `Cas complets du modèle` = as.integer(REF$abs$n[["lw"]]), check.names = FALSE))
+tab(d)
+```
+
+Le nombre de cas complets concerne les indicateurs du modèle proposé. Modifier les indicateurs peut changer ce nombre. Les cellules manquantes sont conservées dans les CSV. Les fichiers d’origine ne sont ni imputés ni recodés automatiquement.
+
+## Holzinger et Swineford
+
+**Fichier téléchargé :** `HolzingerSwineford1939.csv`.
+
+Le fichier possède quinze colonnes, dont neuf indicateurs. `x1` est un test de perception visuelle, `x2` un test de cubes et `x3` un test de losanges. `x4` porte sur la compréhension de paragraphes, `x5` sur les phrases et `x6` sur le sens des mots. `x7`, `x8` et `x9` correspondent respectivement à des additions rapides, au comptage de points et à la discrimination rapide de lettres.
+
+Les colonnes descriptives comprennent notamment `id`, `sex`, `ageyr`, `agemo`, `school` et `grade`. Elles ne sont pas des indicateurs supplémentaires à ajouter au modèle préparé. Les deux écoles sont regroupées dans les exercices; aucune invariance entre écoles n’est établie par ces analyses.
+
+**Source :** données de Holzinger et Swineford, version à neuf tests diffusée avec lavaan. [Notice de la source](https://search.r-project.org/CRAN/refmans/lavaan/html/HolzingerSwineford1939.html).
+
+## Démocratie politique
+
+**Fichier téléchargé :** `PoliticalDemocracy.csv`.
+
+`y1` à `y4` représentent des indicateurs de démocratie en 1960 : liberté de la presse, opposition politique, équité des élections et efficacité du parlement. `y5` à `y8` représentent les dimensions correspondantes en 1965. `x1` à `x3` sont des indicateurs d’industrialisation en 1960. Le fichier regroupe 75 pays.
+
+L’AFC proposée comprend trois facteurs corrélés. Elle n’est pas le modèle structurel complet présenté par Bollen. Des comparaisons de moyennes latentes dans le temps demanderaient des hypothèses et des modèles supplémentaires.
+
+**Source :** Bollen, fichier diffusé avec lavaan. [Notice de la source](https://search.r-project.org/CRAN/refmans/lavaan/html/PoliticalDemocracy.html).
+
+## LSAT 6 et LSAT 7
+
+**Fichiers téléchargés :** `lsat6.csv` et `lsat7.csv`.
+
+Chaque fichier comprend Q1 à Q5, codés 0 pour une réponse incorrecte et 1 pour une réponse correcte. Les sections correspondent à des contenus différents; les cinq noms de colonnes identiques ne signifient pas que les questions sont identiques.
+
+Les lignes sont développées à partir de fréquences de profils de réponses. Il ne s’agit pas d’un ordre de passation ou d’identifiants personnels récupérés. Les deux fichiers ne doivent pas être appariés ligne par ligne. Leur intérêt pédagogique porte sur les modèles d’items binaires et les différences d’ajustement.
+
+**Source :** Bock et Lieberman, fichiers diffusés avec psych. [Notice de la source](https://search.r-project.org/CRAN/refmans/psych/html/bock.table.html).
+
+## SAPA et les seize items cognitifs
+
+**Fichier téléchargé :** `ability.csv`.
+
+| Groupe | Variables exactes |
+|---|---|
+| Raisonnement | `reason.4`, `reason.16`, `reason.17`, `reason.19` |
+| Lettres | `letter.7`, `letter.33`, `letter.34`, `letter.58` |
+| Matrices | `matrix.45`, `matrix.46`, `matrix.47`, `matrix.55` |
+| Rotation | `rotate.3`, `rotate.4`, `rotate.6`, `rotate.8` |
+
+Les réponses sont binaires, 0 incorrect et 1 correct, avec des cellules manquantes conservées. Ces données du projet SAPA illustrent quatre familles de tâches; la référence à ICAR ne doit pas conduire à supposer que tout autre fichier ICAR contient exactement ces personnes et ces colonnes.
+
+Le modèle préparé comporte quatre facteurs corrélés. Il ne contient pas un facteur général de second ordre. La notice attire aussi l’attention sur certaines particularités de réponses aux tâches de matrices.
+
+**Source :** psychTools, collecte SAPA d’août 2012. [Notice de la source](https://search.r-project.org/CRAN/refmans/psychTools/html/ability.html).
+
+## MSQ et les vingt adjectifs d’affect
+
+**Fichier téléchargé :** `msq_affect.csv`.
+
+Le fichier conserve la condition de première occasion de mesure, puis les vingt items des clés d’affect positif et négatif documentées. Les 6 411 lignes du fichier complet de la source comprennent des répétitions de mesure; elles ne représentent pas 6 411 personnes distinctes. Le fichier pédagogique contient `r ent(REF$msq_affect$lignes)` lignes à une seule occasion.
+
+Les réponses à propos du moment présent vont de 0 à 3. Les groupes exacts et les traductions de sens sont donnés dans la fiche de l’application. Ces traductions facilitent la lecture, mais ne constituent pas un instrument francophone validé. Les données regroupent plusieurs études et conditions, ce qui doit être discuté dans une étude substantielle.
+
+**Source :** psychTools, données du laboratoire Personality, Motivation and Cognition de Northwestern University. [Notice de la source](https://search.r-project.org/CRAN/refmans/psychTools/html/msqR.html).
+
+## BFI et les vingt-cinq items de personnalité
+
+**Fichier téléchargé :** `bfi.csv`.
+
+Les groupes sont A1–A5 pour l’agréabilité, C1–C5 pour la conscience, E1–E5 pour l’extraversion, N1–N5 pour le neuroticisme et O1–O5 pour l’ouverture. Les réponses vont de 1 à 6. Les trois variables démographiques du fichier source ne sont pas incluses dans cette copie à vingt-cinq colonnes.
+
+Les clés orientent A1, C4, C5, E1, E2, O2 et O5 en sens inverse des autres items de leur groupe. Aucun recodage n’a été appliqué dans le fichier proposé. L’atelier utilise volontairement ce codage original pour montrer la différence entre structure factorielle et somme brute.
+
+Ces items proviennent de l’IPIP dans le cadre SAPA. Le fichier nommé bfi ne doit pas être confondu avec le Big Five Inventory d’Oliver John.
+
+**Source :** psych. [Notice de la source](https://search.r-project.org/CRAN/refmans/psych/html/bfi.html).
+
+## Le dérivé avec absences
+
+**Fichier du complément :** `HS_absences_pedagogiques.csv`.
+
+Le fichier conserve les quinze colonnes et les `r REF$abs$lignes` lignes HS. Il diffère seulement par 90 cellules vidées, réparties dans x2, x5 et x8 selon la règle du chapitre sur les absences. Aucune valeur observée restante n’est modifiée. La procédure ne simule pas un mécanisme réaliste de non-réponse et ne fournit pas une preuve empirique d’ignorabilité.
+
+## Importer correctement un CSV
+
+Un CSV associe une ligne à une observation et une colonne à une variable. La première ligne fournit les en-têtes dans les fichiers distribués. La virgule est le séparateur des copies fournies. Un tableur francophone peut réenregistrer un fichier avec des points-virgules : choisissez alors ce séparateur dans l’application.
+
+Si toutes les informations apparaissent dans une seule colonne, vérifiez d’abord le séparateur. Si un nom de variable devient une observation, vérifiez l’en-tête. Les cellules manquantes ne doivent pas être remplacées par 99, −999 ou une autre valeur qui serait ensuite analysée comme réponse réelle sans déclaration appropriée.

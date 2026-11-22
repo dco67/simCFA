@@ -1,0 +1,73 @@
+# Dépannage et aide-mémoire {#sec-depannage}
+
+## Retrouver le bon point de départ
+
+Lorsqu’un résultat inattendu apparaît, commencez par vérifier le fichier, les indicateurs, leur nature, l’estimateur, l’identification, les contraintes et l’effectif. Ces informations expliquent davantage de différences que les dernières décimales d’un logiciel.
+
+Pour un exemple intégré, revenez à **Données réelles**, sélectionnez le jeu et cliquez sur **Charger cet exemple et son modèle**. Puis vérifiez les réglages avant d’estimer. Pour un fichier importé, conservez sa notice et reconstituez explicitement les groupes d’indicateurs.
+
+## Le fichier apparaît dans une seule colonne
+
+Le séparateur n’est probablement pas interprété correctement. Choisissez la virgule, le point-virgule ou la tabulation selon le fichier. Les copies CSV de ce manuel utilisent la virgule. Une ouverture puis un enregistrement par un tableur peuvent changer ce séparateur.
+
+Vérifiez aussi la présence de l’en-tête. Le nom `x1` doit être un nom de colonne, pas la première réponse d’une personne. Si les nombres comportent des décimales, vérifiez qu’ils ont été reconnus comme numériques et non comme du texte.
+
+## Le modèle ne s’estime pas
+
+Une première vérification consiste à repérer des indicateurs absents du fichier, une variable constante, des noms de facteurs invalides ou une combinaison incompatible de réglages. Les noms de facteurs doivent être uniques, commencer par une lettre et ne pas reprendre un nom d’indicateur.
+
+Deux indicateurs par facteur ne garantissent pas l’identification. Un nombre de paramètres élevé par rapport à l’information disponible peut aussi poser une difficulté. Revenir au modèle préparé permet de distinguer un problème de données d’un problème introduit par une modification.
+
+Lisez l’avertissement exact. N’interprétez pas des coefficients issus d’une estimation qui n’a pas convergé ou d’une solution inadmissible. Une variance négative ou une corrélation impossible n’est pas une découverte substantielle à publier sans réexamen.
+
+## FIML est refusé
+
+Dans cette version, FIML requiert des indicateurs continus et ML ou ML robuste. Pour les exemples ordinaux, conservez les déclarations ordinales et la stratégie par cas complets proposée. Ne décochez pas les catégories pour faire disparaître l’erreur sans modifier votre justification méthodologique.
+
+Si vos données nécessitent une autre prise en charge des absences ordinales, il faut une procédure adaptée à ce problème. L’absence de cette procédure dans l’interface ne rend pas l’hypothèse d’absence négligeable.
+
+## Les tests de normalité sont absents
+
+Pour des indicateurs tous ordinaux, c’est le comportement attendu : une note remplace le tableau univarié. Pour des données mixtes, les indicateurs ordinaux sont exclus du tableau. Une case non calculée pour une variable continue peut provenir de l’effectif, de la dispersion ou d’une condition propre au test.
+
+Pour les cinq méthodes multivariées, une méthode indisponible peut être signalée sans bloquer toutes les autres. Vérifiez le nombre de cas complets et l’information donnée dans la note. Une absence de calcul n’est jamais une preuve de normalité.
+
+## Mes résultats ne changent pas après une modification
+
+Les résultats correspondent à la dernière analyse estimée. Les nouveaux contrôles préparent une configuration, mais ne remplacent pas cette analyse tant que vous ne cliquez pas sur **3. Estimer**. Le bandeau de configuration modifiée vous le rappelle.
+
+Cette séparation protège les rapports et les scores contre un mélange de modèles. Vérifiez le nom du fichier et l’effectif de l’analyse enregistrée avant toute comparaison.
+
+## Un coefficient fixé n’a pas de valeur de p
+
+Un paramètre fixé pour l’identification n’est pas une estimation libre. Il est normal qu’une saturation de référence égale à 1 ne possède pas un test ordinaire contre zéro. Le coefficient standardisé correspondant peut être bien inférieur à 1.
+
+Pour évaluer la force d’un indicateur, lisez le coefficient entièrement standardisé et les informations pertinentes du modèle, plutôt que de comparer seulement les nombres non standardisés de facteurs ayant des unités différentes.
+
+## Une saturation ou alpha est négatif
+
+Vérifiez le contenu et le codage des items, en particulier dans BFI. L’orientation du facteur et les items inversés peuvent produire des signes négatifs. Ne remplacez pas les valeurs par leur valeur absolue pour obtenir un tableau plus favorable.
+
+Si le score visé exige un recodage, formulez la règle, appliquez-la aux bons items dans une copie documentée et réestimez. Un recodage n’est pas identique à la suppression d’un indicateur ni à un simple changement esthétique du diagramme.
+
+## Le HTMT ou son intervalle n’apparaît pas
+
+Avec un seul facteur, la validité discriminante entre facteurs n’est pas applicable. Des corrélations nulles ou non calculables peuvent également rendre HTMT2 indisponible. Pour le bootstrap, vérifiez la structure simple, la présence de données brutes, les indicateurs continus et le nombre de réplications valides.
+
+Le bootstrap HTMT n’est pas proposé pour les items ordinaux dans cette interface. Les valeurs ponctuelles et les limites de leur lecture demeurent discutables, mais un intervalle absent ne doit pas être fabriqué à partir d’une méthode incompatible.
+
+## Un test de comparaison est bloqué
+
+Certaines restrictions n’ajoutent rien lorsque les paramètres sont déjà fixés. D’autres correspondent à un cas limite ou à un modèle non pris en charge. Les comparaisons d’égalité sont ici réservées aux indicateurs continus. Lisez la restriction effectivement testée et n’interprétez pas un statut non applicable comme une absence de différence.
+
+Avec des corrections robustes, le calcul de différence requiert une méthode adaptée. Les chi carrés corrigés ne se soustraient pas simplement comme des nombres ordinaires.
+
+## Les numéros de ligne des scores ne sont pas consécutifs
+
+Des observations ont pu être exclues ou rester sans score calculable. `ligne_source` conserve la correspondance au fichier chargé, hors en-tête. Utilisez cette colonne pour rattacher les scores et évitez un collage fondé uniquement sur la position dans un tableau réduit.
+
+## Aide-mémoire pour une analyse
+
+Avant l’estimation, vous devez pouvoir nommer la question, les indicateurs, leur type, les facteurs, l’identification et le traitement des absences. Après l’estimation, vérifiez la convergence, l’admissibilité, les observations utilisées et la cohérence des paramètres. Puis examinez l’ajustement, les résidus, la fiabilité et la distinction des facteurs en tenant compte de leurs limites.
+
+Avant de conclure, distinguez les hypothèses prévues des modifications suggérées par les données. Avant de quitter la session, conservez le rapport et les fichiers nécessaires. Ces vérifications rendent votre raisonnement lisible et votre travail reprenable.

@@ -1,0 +1,198 @@
+---
+title: "Analyse factorielle confirmatoire — Rapport"
+date: "`r format(Sys.Date(), '%d/%m/%Y')`"
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+    number_sections: true
+    self_contained: true
+params:
+  fit: NULL
+  fit_warnings: !r character()
+  diagnostics: NULL
+  takeaways: NULL
+  htmt_boot: NULL
+  df: NULL
+  cov_matrices: NULL
+  cor_matrices: NULL
+  source_info: !r list()
+  model_syntax: ""
+  estimator: "ml"
+  missing: "listwise"
+  std_lv: FALSE
+  n_factors: 1
+  source_nom: ""
+  display_std: TRUE
+  display_r2: TRUE
+  display_fit: TRUE
+  mi_threshold: !r Inf
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE,warning=FALSE,message=FALSE,fig.align="center",fig.width=9,fig.height=6)
+library(lavaan)
+fit <- params$fit
+if(is.null(fit) || !isTRUE(lavInspect(fit,"converged")) || !isTRUE(suppressWarnings(lavInspect(fit,"post.check")))) stop("Solution absente, non convergée ou inadmissible.")
+source("cfa_validity.R",local=TRUE)
+validity <- tryCatch(cfa_validity(fit),error=function(e) conditionMessage(e))
+pe <- parameterEstimates(fit,standardized=TRUE)
+fm <- tryCatch(fitMeasures(fit),error=function(e) numeric())
+show_table <- function(x, caption=NULL) {
+  if(is.data.frame(x)) x[] <- lapply(x,function(v) if(is.numeric(v)) round(v,4) else v)
+  if(is.matrix(x)) x <- round(x,4)
+  print(knitr::kable(x,caption=caption,format="html",escape=TRUE,row.names=is.matrix(x),table.attr='class="table table-condensed" style="width:auto;max-width:100%"'))
+}
+```
+
+<style>
+table {width:auto!important;margin-left:0!important;} th,td {padding:6px 12px!important;vertical-align:top;max-width:32rem;overflow-wrap:anywhere;} pre {white-space:pre-wrap;overflow-wrap:anywhere;}
+</style>
+
+# Analyse enregistrée
+
+**Source :** `r params$source_nom`  
+**Données transmises au modèle :** `r nrow(params$df)` lignes × `r ncol(params$df)` indicateurs  
+**Observations utilisées par lavaan :** `r lavInspect(fit,"nobs")`  
+**Estimateur demandé :** `r toupper(params$estimator)`  
+**Gestion des valeurs manquantes :** `r params$missing`  
+**Échelle factorielle :** `r if(params$std_lv) "variance fixée à 1" else "indicateur de référence (sauf contraintes explicites)"`  
+**Paramètres libres :** `r lavInspect(fit,"npar")`  
+**Version de lavaan :** `r as.character(packageVersion("lavaan"))`
+
+Ce rapport correspond aux données et au modèle de l’estimation affichée dans l’application. Une convergence numérique et une solution admissible sont nécessaires, mais ne démontrent ni l’ajustement substantiel ni la validité des construits.
+
+```{r estimation-warnings, results="asis"}
+if(length(params$fit_warnings)) {
+  cat("\n**Avertissements émis lors de l’estimation :**\n\n")
+  for(w in params$fit_warnings) cat("- ",htmltools::htmlEscape(w),"\n")
+}
+```
+
+## Syntaxe du modèle
+
+```{r syntax, comment=""}
+cat(params$model_syntax)
+```
+
+# Que retenir de cette analyse ?
+
+```{r takeaways, results="asis"}
+if(length(params$takeaways)) for(n in names(params$takeaways)) cat("- **",htmltools::htmlEscape(n)," :** ",htmltools::htmlEscape(params$takeaways[[n]]),"\n",sep="")
+```
+
+```{r signals, results="asis"}
+if(!is.null(params$diagnostics)) {
+  cat("\n## Signaux à examiner\n\n")
+  signals<-params$diagnostics$signals
+  if(nrow(signals)) show_table(signals,"Signaux et pistes de lecture")
+  else cat("Aucun signal selon les critères examinés. Cette vérification ne couvre pas toutes les sources de mauvaise spécification.\n")
+}
+```
+
+# Ajustement global
+
+```{r fit, results="asis"}
+names_fit <- c("chisq","df","pvalue","chisq.scaled","df.scaled","pvalue.scaled",
+ "rmsea","rmsea.ci.lower","rmsea.ci.upper","cfi","tli","srmr",
+ "rmsea.scaled","cfi.scaled","tli.scaled","rmsea.robust","rmsea.ci.lower.robust","rmsea.ci.upper.robust","cfi.robust","tli.robust","aic","bic")
+keep <- intersect(names_fit,names(fm))
+show_table(data.frame(Indice=keep,Valeur=as.numeric(fm[keep])))
+```
+
+Les indices robustes sont présentés lorsqu’ils existent. Ils doivent être interprétés ensemble avec les résidus, les incertitudes, les degrés de liberté, la taille d’échantillon et le contenu des items. Des repères usuels comme CFI/TLI proches de .95, RMSEA proche de .06 ou SRMR proche de .08 ne constituent pas des règles universelles d’acceptation. Un modèle juste identifié ne peut pas être évalué par son ajustement global.
+
+# Paramètres estimés
+
+```{r estimates, results="asis"}
+cols <- intersect(c("lhs","op","rhs","label","est","se","z","pvalue","ci.lower","ci.upper",if(params$display_std) "std.all"),names(pe))
+show_table(pe[,cols,drop=FALSE])
+```
+
+Les saturations négatives peuvent refléter le sens des items ou l’orientation arbitraire du facteur. Examinez le codage et le contenu avant de recoder ou de modifier le modèle. Une faible saturation ne justifie pas à elle seule la suppression d’un item.
+
+```{r rsquare, eval=params$display_r2, results="asis"}
+r2 <- lavInspect(fit,"rsquare")
+show_table(data.frame(Indicateur=names(r2),R2=as.numeric(r2)),"Variance expliquée par indicateur")
+```
+
+# Résidus et matrices
+
+Les matrices ci-dessous proviennent directement de lavaan. Les covariances et corrélations résiduelles sont les écarts entre les données et le modèle; elles ne sont pas des tests Z indépendants. Aucun seuil de significativité universel n’est appliqué aux cellules.
+
+```{r residuals, results="asis"}
+observed <- lavInspect(fit,"sampstat")$cov
+implied <- fitted(fit)$cov
+show_table(cov2cor(observed)-cov2cor(implied),"Corrélations observées moins corrélations impliquées")
+if("observed" %in% params$cov_matrices) show_table(observed,"Covariances observées (statistiques d’échantillon)")
+if("implied" %in% params$cov_matrices) show_table(implied,"Covariances impliquées par le modèle")
+if("residual" %in% params$cov_matrices) show_table(observed-implied,"Covariances résiduelles")
+if("observed" %in% params$cor_matrices) show_table(cov2cor(observed),"Corrélations observées")
+if("implied" %in% params$cor_matrices) show_table(cov2cor(implied),"Corrélations impliquées")
+```
+
+Pour des indicateurs ordinaux, les statistiques d’échantillon de cette section portent sur les réponses latentes continues (corrélations polychoriques ou polyseriales), et non sur les corrélations de Pearson entre catégories.
+
+# Fiabilité et validité
+
+```{r reliability, results="asis"}
+if(is.character(validity)) {
+  cat("Indices non calculés : ",htmltools::htmlEscape(validity),"\n")
+} else {
+  show_table(validity$results[,c("Facteur","Alpha","Omega","AVE","H","N_items","N_alpha")],"Fiabilité et variance moyenne extraite")
+  cat("\n",paste0("- ",validity$notes,collapse="\n"),"\n\n")
+  if(nrow(validity$COR)>1) {
+    show_table(validity$FL,"Fornell–Larcker : √AVE en diagonale, corrélations factorielles hors diagonale")
+    htmt<-validity$HTMT; htmt[upper.tri(htmt,diag=TRUE)]<-NA_real_
+    show_table(htmt,"HTMT arithmétique : calculé sur les corrélations des données")
+  }
+}
+```
+
+Le critère de Fornell–Larcker compare chaque √AVE à la **valeur absolue** des corrélations factorielles correspondantes. Le HTMT n’est pas calculé à partir des corrélations prédites par le modèle. Une valeur faible ne prouve pas à elle seule la validité discriminante.
+
+## Complément : HTMT2 et intervalles bootstrap
+
+```{r htmt2-and-bootstrap, results="asis"}
+if(!is.null(params$diagnostics$htmt2)) {
+  h<-params$diagnostics$htmt2;h[upper.tri(h,diag=TRUE)]<-NA_real_
+  show_table(h,"HTMT2 (moyennes géométriques des corrélations en valeur absolue)")
+  cat("Une corrélation nulle peut rendre certaines paires non calculables. Le HTMT2 n’est pas une preuve indépendante du HTMT.\n\n")
+}
+if(!is.null(params$htmt_boot)) {
+  show_table(params$htmt_boot$table,paste("Bootstrap de",toupper(params$htmt_boot$type)))
+  cat("\n",htmltools::htmlEscape(params$htmt_boot$note),"\n")
+} else cat("Aucun intervalle bootstrap demandé ou disponible pour cette estimation.\n")
+```
+
+# Indices de modification
+
+Les indices de modification suggèrent l’effet local d’une libération de paramètre. Ils ne constituent pas des recommandations automatiques : toute modification demande une justification théorique et, si possible, une validation indépendante.
+
+```{r modification, results="asis"}
+if(is.finite(params$mi_threshold)) {
+  tryCatch({
+    mi<-modificationIndices(fit); mi<-mi[is.finite(mi$mi) & mi$mi>=params$mi_threshold,]
+    mi<-mi[order(-mi$mi),intersect(c("lhs","op","rhs","mi","epc","sepc.all"),names(mi)),drop=FALSE]
+    if(nrow(mi)) show_table(mi) else cat("Aucun indice au-dessus du seuil choisi.")
+  },error=function(e) cat(htmltools::htmlEscape(conditionMessage(e))))
+} else cat("Non demandés dans cette exportation.")
+```
+
+# Diagramme
+
+```{r diagram}
+tryCatch(semPlot::semPaths(fit,whatLabels="std",layout="tree2",style="lisrel",residuals=TRUE,nCharNodes=0,nDigits=2),
+  error=function(e) cat("Diagramme indisponible :",conditionMessage(e)))
+```
+
+# Pour conclure l’analyse
+
+1. Reliez les facteurs et les indicateurs à la question de recherche et à la théorie de mesure.
+2. Examinez l’ajustement global, les résidus et les incertitudes des paramètres.
+3. Vérifiez le codage des items et précisez le score dont la fiabilité est évaluée.
+4. Discutez la distinction entre facteurs sans réduire la validité à un seuil.
+5. Présentez les limites de l’échantillon, de l’estimateur et des modifications éventuelles.
+
+Le téléchargement « Code R » de l’application contient les données, la syntaxe et les options de cette estimation pour permettre sa reproduction. L’ébauche Stata est un outil de traduction à vérifier séparément.

@@ -1,0 +1,5 @@
+| Facteur 1 | Facteur 2 | HTMT |
+| --- | --- | --- |
+| Democratie65 | Democratie60 | 0,982 |
+| Industrialisation | Democratie60 | 0,434 |
+| Industrialisation | Democratie65 | 0,556 |

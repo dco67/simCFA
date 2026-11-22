@@ -1,0 +1,17 @@
+Complément du manuel Analyse factorielle confirmatoire
+Daniel Coulombe — édition du 20 novembre 2026
+
+Les sept CSV réels sont les mêmes copies que celles incluses dans l’application.
+Le dossier notices conserve leur contexte, leurs codages, les modèles et les sources.
+Aucune imputation ni inversion d’item n’est effectuée dans ces fichiers.
+
+HS_absences_pedagogiques.csv est un dérivé explicite et facultatif pour l’exercice
+sur les absences : x2 lignes de données 1 à 30, x5 lignes 31 à 60 et x8 lignes
+61 à 90 ont été vidées. Toutes les autres cellules et les 301 lignes sont conservées.
+Ce dérivé ne garantit pas un mécanisme MCAR ou MAR.
+
+Pour importer : Charger un fichier; en-têtes en première ligne; virgule comme
+séparateur pour les copies fournies. Les CSV conservent les absences en cellules vides.
+
+Les jeux sont diffusés par lavaan, psych et psychTools (GPL >= 2).
+Les références de chaque échantillon figurent dans les notices.

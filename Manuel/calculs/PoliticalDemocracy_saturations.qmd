@@ -1,0 +1,13 @@
+| Facteur | Item | Saturation |
+| --- | --- | --- |
+| Democratie60 | y1 | 0,845 |
+| Democratie60 | y2 | 0,760 |
+| Democratie60 | y3 | 0,705 |
+| Democratie60 | y4 | 0,860 |
+| Democratie65 | y5 | 0,803 |
+| Democratie65 | y6 | 0,783 |
+| Democratie65 | y7 | 0,819 |
+| Democratie65 | y8 | 0,847 |
+| Industrialisation | x1 | 0,920 |
+| Industrialisation | x2 | 0,973 |
+| Industrialisation | x3 | 0,872 |

@@ -1,0 +1,5 @@
+| Facteur 1 | Facteur 2 | Corrélation |
+| --- | --- | --- |
+| Democratie65 | Democratie60 | 0,978 |
+| Industrialisation | Democratie60 | 0,448 |
+| Industrialisation | Democratie65 | 0,555 |

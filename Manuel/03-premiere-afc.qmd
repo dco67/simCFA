@@ -1,0 +1,160 @@
+# Réaliser sa première AFC de bout en bout {#sec-premiere}
+
+```{r}
+#| include: false
+source("_common.R")
+S <- REF$hs$sat
+st <- function(item) S$Std[S$Item == item]
+C <- REF$hs$cor
+```
+
+::: {.callout-note title="Objectifs du chapitre"}
+- Préparer, estimer et vérifier un modèle à trois facteurs corrélés.
+- Lire les saturations non standardisées et standardisées.
+- Interpréter les corrélations entre facteurs sans leur prêter un sens causal.
+- Conserver l’analyse dans un rapport avant toute modification.
+:::
+
+::: {.callout-tip title="Idée centrale"}
+Avant d’interpréter, on vérifie que l’analyse est bien celle qu’on voulait : bon fichier, bons indicateurs, bon estimateur, effectif attendu, solution admissible. Ensuite seulement, on lit les saturations standardisées, puis les relations entre facteurs.
+:::
+
+## La question et les données
+
+Nous examinons neuf tests cognitifs de `r ent(REF$hs$n)` élèves, regroupés dans le fichier Holzinger–Swineford. L’hypothèse de départ distingue trois aptitudes corrélées : une dimension visuelle, une dimension verbale et une dimension de vitesse. Cette structure est couramment utilisée pour illustrer l’AFC; son caractère classique ne garantit pas qu’elle décrive parfaitement les données [@lavaancfa].
+
+Dans ce premier exercice, les neuf résultats sont traités comme continus. Les variables descriptives supplémentaires du fichier, dont l’école, ne sont pas utilisées comme indicateurs. L’analyse porte sur l’ensemble des élèves, sans analyse multigroupe.
+
+## Préparer exactement le modèle
+
+1. Dans **1. Choisir les données**, cochez **Données réelles**.
+2. Sélectionnez **Holzinger–Swineford** et lisez la fiche.
+3. Cliquez sur **Charger cet exemple et son modèle**.
+4. Dans **Modèle & Spécification**, vérifiez les associations du tableau ci-dessous.
+
+| Facteur | Indicateurs à sélectionner | Sens général |
+|---|---|---|
+| Visuel | `x1`, `x2`, `x3` | Perception visuelle, cubes, losanges |
+| Texte | `x4`, `x5`, `x6` | Compréhension, phrases, sens des mots |
+| Vitesse | `x7`, `x8`, `x9` | Additions, comptage de points, discrimination de lettres |
+
+Ne sélectionnez pas les neuf variables pour chacun des facteurs. Chaque indicateur appartient ici à un seul groupe. Aucune covariance résiduelle n’est ajoutée.
+
+Vérifiez ensuite **ML**, **λ₁=1** et **Cas complets**. Les contrôles **Items ordinaux** doivent être à zéro pour cet exercice. Dans **Affichage des résultats et matrices**, conservez **Coeff. Std.**, et cochez également **R²** et **Ajustement**. Ne cochez pas **Moyennes** pour cette première comparaison de covariances.
+
+Cliquez sur **3. Estimer**, ou sur **Estimer le modèle** dans le panneau de configuration. Les deux commandes déclenchent l’analyse. Si une erreur apparaît, ne poursuivez pas vers l’interprétation : comparez vos sélections et réglages à cette liste.
+
+## Vérifier avant d’interpréter
+
+Le bandeau de l’analyse doit annoncer une estimation convergée et admissible. Vous devez retrouver **`r ent(REF$hs$n)` observations utilisées** et **`r REF$hs$npar` paramètres libres**. Dans cette configuration, le modèle comporte **`r ix(HSF, "df", 0)` degrés de liberté**. Ces informations constituent des contrôles de cohérence, pas une preuve de validité.
+
+Dans **Données**, vérifiez les noms des indicateurs. Puis ouvrez **Statistiques Descriptives → Univariées** et repérez les échelles différentes des tests. Des unités différentes justifient de distinguer coefficients non standardisés et standardisés.
+
+```{r}
+#| label: tbl-hs-desc
+#| tbl-cap: !expr 'paste0("Statistiques descriptives des neuf tests (", (REF$hs$n), " élèves). Les moyennes et les étendues diffèrent d’un test à l’autre : les saturations non standardisées ne sont donc pas directement comparables.")'
+d <- REF$hs$desc; rownames(d) <- NULL
+tab(d, 2)
+```
+
+## Lire les paramètres
+
+Ouvrez **Analyse → Analyse de base → Résultats**. La sortie emploie des termes anglais issus du moteur de calcul. Les principales colonnes ont le sens suivant :
+
+| Colonne | Lecture |
+|---|---|
+| Estimate | Coefficient dans l’échelle non standardisée |
+| Std.Err | Erreur-type de l’estimation libre |
+| z-value et P(\>\|z\|) | Test du coefficient libre contre zéro |
+| Std.lv | Standardisation des variables latentes |
+| Std.all | Standardisation des facteurs et des indicateurs |
+
+![**Analyse → Analyse de base → Résultats**. La sortie détaillée commence par l’estimateur, le nombre de paramètres et d’observations, puis le test du modèle. Les relations de mesure (`=~`) suivent plus bas.](images/app/ch03_parametres.png){#fig-app-parametres width=100%}
+
+Dans les relations de mesure, la notation `=~` indique qu’un facteur est mesuré par des indicateurs. Le coefficient non standardisé de `x1`, `x4` et `x7` est fixé à 1, puisqu’ils servent de références. Leur valeur 1 ne signifie pas que ces tests mesurent parfaitement leur facteur.
+
+Les saturations **Std.all** sont les repères les plus simples pour commencer :
+
+```{r}
+#| label: tbl-hs-sat
+#| tbl-cap: "Saturations entièrement standardisées (Std.all) du modèle à trois facteurs et part de variance expliquée de chaque test (carré de la saturation)."
+d <- data.frame(Facteur = S$Facteur, Item = S$Item, Saturation = S$Std, `Variance expliquée` = S$Std^2, check.names = FALSE)
+tab(d)
+```
+
+```{r}
+#| label: fig-hs-sat
+#| fig-cap: "Saturations standardisées du modèle de référence. La ligne pointillée marque le repère descriptif de 0,40 utilisé par les signaux de l’application; x2 le dépasse de peu."
+#| fig-height: 3.6
+d <- S; d$Item <- factor(d$Item, levels = rev(d$Item)); d$Facteur <- factor(d$Facteur, levels = unique(S$Facteur))
+ggplot(d, aes(Std, Item, fill = Facteur)) + geom_col(width = .65) +
+  geom_vline(xintercept = .40, linetype = 2, colour = PAL["gris"]) +
+  geom_text(aes(label = v(Std)), hjust = -.15, size = 3.4) +
+  scale_fill_manual(values = unname(PAL[c("bleu", "clair", "orange")])) +
+  scale_x_continuous(limits = c(0, 1.02), labels = function(x) v(x, 1)) +
+  labs(x = "Saturation standardisée", y = NULL, fill = NULL) + theme_manuel()
+```
+
+`x2` est moins fortement lié au facteur visuel que `x1`. Cette différence invite à examiner le contenu et l’incertitude de mesure. Elle ne conduit pas automatiquement à supprimer `x2`. Les trois tests verbaux ont ici des saturations standardisées élevées.
+
+Pour un indicateur associé à un seul facteur, le carré de sa saturation standardisée donne la proportion de variance expliquée dans ce modèle. Avec une saturation de `r v(st("x2"))`, on obtient $`r vm(st("x2"))`^2=`r vm(st("x2")^2)`$. Le facteur visuel explique donc environ `r pct(st("x2")^2)` de la variance de `x2`, sous cette spécification. C’est la valeur que l’application affiche dans la section **R-Square** lorsque **R²** est coché.
+
+## Lire les relations entre facteurs
+
+Les facteurs sont autorisés à covarier. Les corrélations estimées sont :
+
+```{r}
+#| label: tbl-hs-cor
+#| tbl-cap: "Corrélations entre facteurs estimées par le modèle de référence."
+d <- data.frame(Paire = c("Visuel – Texte", "Visuel – Vitesse", "Texte – Vitesse"),
+                Corrélation = C[upper.tri(C)][c(1, 2, 3)])
+tab(d)
+```
+
+Les facteurs visuel et verbal sont liés (`r v(C["Visuel", "Texte"])`), mais le modèle ne les impose pas identiques. La relation la plus faible unit le texte et la vitesse (`r v(C["Texte", "Vitesse"])`). Une corrélation factorielle ne démontre pas une relation causale. Ces liens sont estimés à partir des relations entre indicateurs, sous les hypothèses du modèle. Ils sont plus élevés que les corrélations entre les tests eux-mêmes, car le modèle corrige l’atténuation due à l’erreur de mesure.
+
+## Porter un premier jugement sur l’ensemble
+
+Cliquez sur **4. Interpréter**. Lisez séparément le constat numérique, les indices d’ajustement et les signaux à examiner. Le modèle converge, mais les données ne sont pas reproduites sans écart : le CFI vaut `r ix(HSF, "cfi")` et le RMSEA `r ix(HSF, "rmsea")`. Le chapitre suivant détaillera pourquoi on peut obtenir simultanément des saturations cohérentes et un ajustement global à améliorer.
+
+Écrivez dès maintenant une conclusion provisoire de trois phrases : quelle structure avez-vous examinée ? Quelles observations soutiennent une interprétation en trois dimensions ? Quels éléments empêchent de conclure à une représentation entièrement satisfaisante ?
+
+## Conserver cette première analyse
+
+Revenez aux résultats puis cliquez sur **Télécharger le rapport** dans **Analyse de base**. Enregistrez-le sous un nom explicite, par exemple `HS_trois_facteurs_ML.html`. Conservez-le avant toute modification. Le rapport correspond à l’analyse estimée, pas à une nouvelle analyse des réglages éventuellement changés depuis.
+
+## Laboratoire : changer l’échelle des facteurs
+
+Sans changer de données, remplacez **λ₁=1** par **σ²(F)=1**, puis estimez à nouveau. Relevez la saturation non standardisée de `x1`, la variance du facteur `Visuel`, le CFI et la saturation standardisée de `x2`. Comparez avec l’analyse précédente.
+
+::: {.callout-tip title="Réponse" collapse="true"}
+```{r}
+#| include: false
+pe0 <- REF$hs$pe; pe1 <- REF$hs_stdlv$pe
+g <- function(pe, l, o, r) pe$est[pe$lhs == l & pe$op == o & pe$rhs == r]
+```
+Avec **λ₁=1**, la saturation non standardisée de `x1` vaut 1 et la variance du facteur `Visuel` est estimée à `r v(g(pe0, "Visuel", "~~", "Visuel"))`. Avec **σ²(F)=1**, la variance vaut 1 et la saturation de `x1` est estimée à `r v(g(pe1, "Visuel", "=~", "x1"))`, soit la racine carrée de la variance précédente. Le CFI reste `r ix(REF$hs_stdlv$fit, "cfi")` et la saturation standardisée de `x2` reste `r v(REF$hs_stdlv$sat$Std[REF$hs_stdlv$sat$Item == "x2"])`. Vous avez changé l’unité du facteur, pas la structure du modèle.
+
+Revenez ensuite à l’exemple d’origine par **Charger cet exemple et son modèle**. Cette remise à zéro évite de transporter involontairement un réglage vers l’activité suivante.
+:::
+
+::: {.callout-important title="À retenir"}
+- Vérifier l’effectif (`r REF$hs$n`), les degrés de liberté (`r ix(HSF, "df", 0)`) et l’admissibilité avant toute lecture.
+- Les saturations standardisées se comparent entre indicateurs; leur carré donne la variance expliquée.
+- Une saturation fixée à 1 est une référence d’échelle, pas une mesure parfaite.
+- Des saturations cohérentes n’assurent pas un bon ajustement global.
+:::
+
+## Quiz
+
+1. Pourquoi `x1`, `x4` et `x7` n’ont-ils pas d’erreur-type pour leur saturation non standardisée ?
+2. Quelle part de la variance de `x5` le facteur `Texte` explique-t-il ?
+3. Une corrélation de `r v(C["Visuel", "Vitesse"])` entre `Visuel` et `Vitesse` signifie-t-elle que la vitesse influence la perception visuelle ?
+4. Pourquoi télécharger le rapport avant de modifier le modèle ?
+
+::: {.callout-tip title="Réponses" collapse="true"}
+1. Leur saturation est fixée à 1 pour donner une échelle au facteur; un paramètre fixé n’est pas estimé.
+2. Environ `r pct(st("x5")^2)` ($`r vm(st("x5"))`^2$).
+3. Non. L’AFC estime une association entre facteurs, sans direction causale.
+4. Le rapport décrit l’analyse enregistrée; une nouvelle estimation la remplace dans l’application.
+:::

@@ -1,0 +1,7 @@
+| Facteur | Item | Saturation |
+| --- | --- | --- |
+| Aptitude | Q1 | 0,389 |
+| Aptitude | Q2 | 0,397 |
+| Aptitude | Q3 | 0,471 |
+| Aptitude | Q4 | 0,377 |
+| Aptitude | Q5 | 0,342 |

@@ -1,0 +1,11 @@
+| indice | valeur | version |
+| --- | --- | --- |
+| chisq | 11,677 | scaled |
+| df | 5 | scaled |
+| pvalue | 0,039 | scaled |
+| cfi | 0,943 | robust |
+| tli | 0,886 | robust |
+| rmsea | 0,079 | robust |
+| rmsea.ci.lower | 0,015 | robust |
+| rmsea.ci.upper | 0,139 | robust |
+| srmr | 0,045 | standard |

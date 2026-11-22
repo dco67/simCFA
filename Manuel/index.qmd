@@ -1,0 +1,54 @@
+# Bienvenue {.unnumbered}
+
+```{r}
+#| include: false
+source("_common.R")
+```
+
+Ce manuel accompagne l’**application CFA** pour apprendre à spécifier, estimer et interpréter une analyse factorielle confirmatoire, ou **AFC**. Le point de départ est une question de mesure : plusieurs réponses ou performances peuvent-elles être représentées par les dimensions que nous souhaitons mesurer ? Le résultat recherché est une conclusion argumentée sur un modèle de mesure, appuyée sur les données, les paramètres et les limites de l’analyse.
+
+Le logiciel accomplit les calculs. Votre travail consiste à définir ce que les variables représentent, à choisir une analyse cohérente avec leur nature, à vérifier la solution et à expliquer ce que les résultats permettent de soutenir. Un modèle peut converger, donner des coefficients significatifs et demeurer substantiellement discutable.
+
+## Ce qu’il faut pour commencer
+
+Ouvrez l’application CFA fournie dans votre cours et gardez ce manuel dans une autre fenêtre. **Aucune connaissance de R, aucune saisie de syntaxe et aucune installation d’un package ne sont requises pour les activités du lecteur.** L’application peut être utilisée en ligne ou dans l’environnement préparé par votre enseignant. Si une session se ferme, conservez les rapports déjà téléchargés : ils permettent de retrouver les analyses réalisées.
+
+Les préalables utiles sont la moyenne, la variance, la corrélation, la régression simple, l’intervalle de confiance et le test d’hypothèse. Le premier chapitre rappelle leur rôle dans le modèle de mesure. On ne suppose pas que vous connaissiez déjà les variables latentes, les estimateurs robustes ou la fiabilité fondée sur un modèle.
+
+Les intitulés cités en **gras** correspondent aux commandes de l’application. Les valeurs numériques du manuel ne sont pas recopiées : elles sont calculées à chaque compilation par le moteur même de l’application, sur les fichiers et les réglages indiqués (cette édition : lavaan `r REF$versions$lavaan`, `r sub(" \\(.*", "", REF$versions$R)`). Les dernières décimales peuvent varier avec la version du moteur de calcul. Une différence plus importante doit conduire à vérifier les données, le modèle, l’estimateur et les cas utilisés.
+
+## Où trouver les données
+
+Les sept exemples réels sont directement accessibles dans **1. Choisir les données → Données réelles**. Sélectionnez un jeu pour lire sa fiche. Le bouton **Charger cet exemple et son modèle** prépare les facteurs, leurs indicateurs et les réglages proposés. Les boutons **Données CSV** et **Notice et modèle** permettent de conserver les fichiers sur votre ordinateur. Il n’est pas nécessaire d’accéder au code de l’application ou du manuel.
+
+Un exercice sur les données manquantes utilise un fichier dérivé, clairement identifié comme pédagogique. Il est fourni dans le complément **CFA_donnees_et_activites.zip** à distribuer avec le manuel. Une méthode pour le reconstruire à partir du téléchargement de l’application est également donnée. Si vous lisez le PDF ou l’EPUB, utilisez l’application pour les données originales et le complément distribué par votre cours pour ce fichier dérivé. Ne cherchez pas un dossier de code auquel vous n’auriez pas accès.
+
+::: {.content-visible when-format="html"}
+[ Télécharger le complément de données et de notices ](data/CFA_donnees_et_activites.zip)
+:::
+
+## Trois parcours possibles
+
+| Votre objectif | Parcours conseillé |
+|---|---|
+| Réaliser une première AFC | Lire les chapitres sur la mesure et l’interface, puis suivre intégralement la première analyse |
+| Comprendre les résultats | Poursuivre avec l’ajustement, les diagnostics, la fiabilité et la distinction entre facteurs |
+| Conduire une analyse autonome | Ajouter les données ordinales, les absences, les comparaisons, la simulation et l’étude complète |
+
+Les durées dépendent des préalables. Comptez environ une séance pour la première analyse et plusieurs séances pour traiter sérieusement les diagnostics et les ateliers. Les exercices avancés ne sont pas des prérequis cachés des premières manipulations.
+
+## Comment chaque chapitre est organisé
+
+Chaque chapitre s’ouvre sur ses **objectifs** et son **idée centrale**. Les captures d’écran montrent l’application dans l’état décrit par le texte. Un **laboratoire** propose ensuite une manipulation guidée, dont la réponse est repliée : essayez avant de l’ouvrir. Un encadré **À retenir** et un court **quiz**, avec réponses repliées, terminent le chapitre. Dans le PDF, les réponses apparaissent directement à la suite des questions.
+
+## Comment travailler seul
+
+Pour chaque activité, commencez par identifier les données, la question et les réglages. Faites ensuite les manipulations dans l’ordre. Notez les résultats avant de lire le corrigé. Lorsque votre résultat diffère du repère, utilisez les vérifications proposées plutôt que de modifier des options au hasard.
+
+Un dossier de travail simple suffit : placez-y les CSV téléchargés, les notices et les rapports HTML. Donnez aux rapports des noms qui distinguent les analyses, par exemple `HS_trois_facteurs_ML.html`. Le navigateur peut ajouter un suffixe si un fichier de même nom existe déjà : renommez-le au besoin après le téléchargement.
+
+## Portée de cette édition
+
+Le manuel décrit la version de l’application révisée le **20 novembre 2026** : quatre étapes, deux modes d’affichage, sept jeux réels et traitement explicite des indicateurs ordinaux. Il porte sur les modèles de mesure de premier ordre à un groupe que l’interface permet effectivement de construire. Les modèles structurels de médiation, les analyses multigroupes, les modèles longitudinaux et les modèles multiniveaux ne font pas partie des activités proposées ici.
+
+Cette limite ne diminue pas la portée de l’AFC. Elle permet de commencer par une question essentielle : **la manière dont nous mesurons les construits est-elle défendable ?**

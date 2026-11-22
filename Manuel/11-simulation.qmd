@@ -1,0 +1,169 @@
+# Utiliser la simulation pour comprendre le modèle {#sec-simulation}
+
+```{r}
+#| include: false
+source("_common.R")
+S <- REF$sim; MC <- REF$sim_mc
+om_pop <- function(l, k = 4) (k * l)^2 / ((k * l)^2 + k * (1 - l^2))
+```
+
+::: {.callout-note title="Objectifs du chapitre"}
+- Distinguer les paramètres fixés dans la population, les valeurs tirées et les estimations.
+- Reproduire un échantillon grâce à la graine.
+- Observer l’effet de l’effectif et de la force des indicateurs sur les estimations.
+- Créer délibérément une mauvaise spécification et en observer les conséquences.
+:::
+
+::: {.callout-tip title="Idée centrale"}
+Avec des données réelles, on ne connaît jamais la bonne réponse. Avec une simulation, on la fixe d’avance : on peut alors voir de combien une estimation s’en écarte d’un échantillon à l’autre et comment un indice réagit à un défaut qu’on a introduit soi-même.
+:::
+
+## Une population connue et un échantillon variable
+
+Les données réelles ne donnent pas directement accès aux paramètres de la population. La simulation permet de définir ces paramètres puis de générer un échantillon. Elle aide à comprendre les fluctuations d’estimation, la force des indicateurs et les conséquences d’une mauvaise spécification.
+
+Les paramètres de simulation ne constituent pas les résultats de l’AFC. Une saturation demandée à 0,70 dans la population ne sera pas exactement estimée à 0,70 dans chaque échantillon. C’est précisément l’un des intérêts pédagogiques de l’expérience.
+
+## Préparer une première expérience contrôlée
+
+Dans **1. Choisir les données → Données simulées**, fixez : un facteur, quatre indicateurs, 100 observations, données continues. Dans **Force des loadings**, placez les deux bornes à **0,70**. Avec un seul facteur, l’étendue des corrélations entre facteurs n’intervient pas.
+
+![**Source de données → Données simulées** : nombre de facteurs et d’indicateurs, effectif, type de données, étendue des saturations (« Force des loadings ») et des corrélations entre facteurs.](images/app/ch11_simulation.png){#fig-app-simulation width=100%}
+
+Passez à **2. Définir le modèle**. Vérifiez le facteur `F1` et les variables `x1`, `x2`, `x3`, `x4`. Dans le bloc de génération, saisissez la **graine 123**, puis cliquez sur **Générer les données**. Choisissez ML, les cas complets et l’indicateur de référence; estimez.
+
+Si vous ne parvenez pas à superposer exactement les deux poignées du curseur, vérifiez les valeurs affichées aux extrémités. Une étendue proche de 0,70 mais non égale génère des saturations de population différentes de celles de cette expérience de référence.
+
+## Ce que signifie la graine
+
+La graine fixe le point de départ du générateur aléatoire. Avec les mêmes réglages et le même environnement, elle permet de reproduire l’échantillon. **La valeur 0 est une graine fixe dans cette application; elle ne signifie pas « au hasard ».**
+
+Changer la graine produit un autre échantillon et peut aussi changer les paramètres tirés dans les étendues demandées. Pour isoler un effet, conservez les autres réglages et utilisez des étendues ponctuelles lorsque c’est possible.
+
+## Variance expliquée d’un indicateur
+
+Avec une saturation de population standardisée de 0,70, la variance expliquée de chaque indicateur simple est de 0,49 et la part résiduelle de 0,51. Les saturations demandées dans l’application sont standardisées dans la population; les résidus sont générés en cohérence avec cette définition.
+
+```{r}
+#| label: fig-variance-expliquee
+#| fig-cap: "Variance expliquée d’un indicateur (carré de la saturation standardisée) et oméga de la somme de quatre indicateurs équivalents, en fonction de la saturation de population. Les points marquent les trois conditions de l’expérience sur la force des indicateurs."
+#| fig-height: 3.6
+l <- seq(.1, .95, by = .01)
+d <- rbind(data.frame(l = l, y = l^2, Courbe = "Variance expliquée d’un indicateur"),
+           data.frame(l = l, y = om_pop(l), Courbe = "Oméga de la somme de 4 indicateurs"))
+pts <- rbind(data.frame(l = c(.4, .7, .9), y = c(.4, .7, .9)^2, Courbe = "Variance expliquée d’un indicateur"),
+             data.frame(l = c(.4, .7, .9), y = om_pop(c(.4, .7, .9)), Courbe = "Oméga de la somme de 4 indicateurs"))
+ggplot(d, aes(l, y, colour = Courbe)) + geom_line(linewidth = 1) + geom_point(data = pts, size = 2.6) +
+  scale_colour_manual(values = unname(PAL[c("orange", "bleu")])) +
+  scale_x_continuous(labels = function(x) v(x, 1)) + scale_y_continuous(limits = c(0, 1), labels = function(x) v(x, 1)) +
+  labs(x = "Saturation standardisée de population", y = NULL, colour = NULL) + theme_manuel()
+```
+
+Passer d’une saturation de 0,40 à 0,70 n’ajoute pas seulement 0,30 à la proportion expliquée : celle-ci passe de 0,16 à 0,49. Cela aide à comprendre pourquoi des indicateurs assez faiblement reliés au facteur peuvent limiter fortement la qualité d’un score.
+
+## Augmenter l’effectif
+
+Conservez les mêmes réglages, passez à **1 000 observations**, régénérez les données avec la graine 123 et estimez de nouveau. Notez les saturations et les erreurs-types. Ne vous contentez pas de comparer les valeurs de p, qui dépendent fortement de l’effectif.
+
+Voici deux repères pour cette expérience précise :
+
+```{r}
+#| label: tbl-sim
+#| tbl-cap: "Oméga et AVE estimés dans les deux échantillons (graine 123), comparés à leurs valeurs de population. Erreur-type : moyenne des erreurs-types des saturations libres."
+d <- data.frame(Échantillon = c("100 observations", "1 000 observations", "Population"),
+                Oméga = c(S$n100$omega, S$n1000$omega, om_pop(.7)),
+                AVE = c(S$n100$ave, S$n1000$ave, .49),
+                `Erreur-type moyenne` = c(mean(S$n100$se), mean(S$n1000$se), NA), check.names = FALSE)
+tab(d)
+```
+
+Dans cette population, l’AVE vaut 0,49 et l’oméga de la somme vaut `r v(om_pop(.7))`. Les estimations échantillonnales fluctuent autour de ces cibles. L’erreur-type moyenne des saturations passe de `r v(mean(S$n100$se))` à `r v(mean(S$n1000$se))`, soit à peu près une division par $\sqrt{10}\approx 3{,}2$. Un échantillon plus grand ne garantit pas que chaque paramètre sera, lors d’un tirage particulier, plus proche de la population; il réduit généralement la variabilité d’estimation dans des répétitions comparables.
+
+```{r}
+#| label: fig-sim-mc
+#| fig-cap: "Oméga estimé dans 200 échantillons simulés de chaque taille (même population : un facteur, quatre saturations de 0,70; graines 1001 à 1200). La ligne verticale marque la valeur de population. Avec 100 observations, une part non négligeable des échantillons tombe sous 0,70."
+#| fig-height: 3.4
+MC$Taille <- factor(paste(ent(MC$n), "observations"), levels = paste(ent(c(100, 1000)), "observations"))
+ggplot(MC, aes(omega)) + geom_histogram(bins = 30, fill = PAL["clair"], colour = "white") +
+  geom_vline(xintercept = om_pop(.7), colour = PAL["orange"], linewidth = 1) +
+  facet_wrap(~Taille, ncol = 2) +
+  scale_x_continuous(labels = function(x) v(x, 2)) +
+  labs(x = "Oméga estimé", y = "Échantillons") + theme_manuel(11)
+```
+
+```{r}
+#| include: false
+q100 <- MC$omega[MC$n == 100]; q1000 <- MC$omega[MC$n == 1000]
+```
+
+Sur 200 répétitions, l’oméga estimé varie de `r v(min(q100), 2)` à `r v(max(q100), 2)` avec 100 observations, et de `r v(min(q1000), 2)` à `r v(max(q1000), 2)` avec 1 000. Avec 100 observations, `r pct(mean(q100 < .70))` des échantillons donnent un oméga sous 0,70, alors que la valeur de population est `r v(om_pop(.7), 2)`. Un repère appliqué à une seule estimation peut donc conduire à des conclusions opposées pour une même population.
+
+Les données de 100 observations ne doivent pas être considérées automatiquement comme les 100 premières lignes des données de 1 000 observations. La procédure de génération peut organiser les tirages différemment selon la dimension de l’échantillon. Comparez les conditions et les résultats, sans supposer un emboîtement des lignes.
+
+## Augmenter la force des indicateurs
+
+Avec 1 000 observations et quatre indicateurs, comparez trois conditions : saturations fixées à 0,40, puis 0,70, puis 0,90. Conservez la graine 123, régénérez à chaque condition et estimez. La population simple prévoit une AVE de 0,16, 0,49 et 0,81 respectivement.
+
+```{r}
+#| label: tbl-force
+#| tbl-cap: "Effet de la force des indicateurs (1 000 observations, graine 123) : valeurs de population et estimations."
+d <- data.frame(Saturation = c(.4, .7, .9),
+                `AVE population` = c(.4, .7, .9)^2, `AVE estimée` = sapply(S$force, `[[`, "ave"),
+                `Oméga population` = om_pop(c(.4, .7, .9)), `Oméga estimé` = sapply(S$force, `[[`, "omega"), check.names = FALSE)
+tab(d)
+```
+
+L’oméga de la somme de quatre indicateurs équivalents vaut `r v(om_pop(.4))`, `r v(om_pop(.7))` et `r v(om_pop(.9))` dans ces trois conditions de population. Cette augmentation découle de la structure de population définie; il ne s’agit pas d’un effet à attribuer à un nouvel instrument réel.
+
+## Simuler deux facteurs
+
+Choisissez deux facteurs et six indicateurs. La population générée répartit automatiquement les trois premiers indicateurs dans `F1` et les trois suivants dans `F2`. Lisez l’avertissement de l’application : modifier ensuite les affectations du modèle analysé ne change pas silencieusement cette population de génération.
+
+Pour étudier une mauvaise spécification, générez les données sous cette répartition, puis attribuez par exemple `x3` au second facteur dans le modèle analysé. Comparez l’ajustement et les saturations. Vous avez délibérément fait diverger le modèle estimé du modèle générateur; cette différence doit être annoncée.
+
+Des corrélations factorielles élevées peuvent rendre les distinctions plus difficiles. Avec plus de deux facteurs, toutes les combinaisons de corrélations ne forment pas une matrice admissible. Si une étendue demandée ne permet pas une génération valable, l’application le signale; réduisez-la plutôt que de supposer que le logiciel réparera les relations sans vous le dire.
+
+## Simuler des réponses ordinales
+
+Le choix **Ordinales** transforme les réponses latentes en catégories d’effectifs à peu près égaux. Vérifiez le nombre de catégories, régénérez les données et utilisez les déclarations ordinales ainsi que WLSMV pour l’estimation. L’objectif est d’observer la relation entre catégories et modèle sous-jacent, pas de forcer les catégories à passer un test continu de normalité.
+
+## Laboratoire : une mauvaise spécification volontaire
+
+1. Simulez deux facteurs, six indicateurs, 500 observations, données continues, saturations de 0,70 à 0,70 et corrélation entre facteurs de 0,30 à 0,30, avec la graine 42.
+2. Estimez d’abord le modèle correct (`x1`–`x3` sur `F1`, `x4`–`x6` sur `F2`) et relevez le CFI, le RMSEA et la saturation standardisée de `x3`.
+3. Déplacez `x3` vers `F2`, estimez de nouveau et relevez les mêmes valeurs.
+4. Quels diagnostics signalent le problème ? Lesquels restent silencieux ?
+
+::: {.callout-tip title="Réponse" collapse="true"}
+```{r}
+#| include: false
+s <- moteur$cfa_simulate(2, 6, 500, c(.7, .7), c(.3, .3), seed = 42)
+ok <- ajuster("F1 =~ x1 + x2 + x3\nF2 =~ x4 + x5 + x6", s$data, options_app())
+ko <- ajuster("F1 =~ x1 + x2\nF2 =~ x3 + x4 + x5 + x6", s$data, options_app())
+fo <- moteur$cfa_diagnostic_bundle(ok)$fit; fk <- moteur$cfa_diagnostic_bundle(ko)$fit
+so <- saturations(ok); sk <- saturations(ko)
+sig <- moteur$cfa_diagnostic_bundle(ko)$signals
+```
+Le modèle correct s’ajuste `r if (indice(fo, "rmsea") < .05) "très bien" else "correctement"` (CFI `r ix(fo, "cfi")`, RMSEA `r ix(fo, "rmsea")`) et `x3` sature à `r v(so$Std[so$Item == "x3"])` sur `F1`. Placé sur `F2`, `x3` n’y sature plus qu’à `r v(sk$Std[sk$Item == "x3"])`, et l’ajustement se dégrade (CFI `r ix(fk, "cfi")`, RMSEA `r ix(fk, "rmsea")`). Les signaux de l’application relèvent `r if (nrow(sig)) paste(tolower(unique(sig$signal)), collapse = " et ") else "aucun problème"` : `r if (nrow(sig)) "ils pointent le bon indicateur" else "ce sont l’ajustement et les indices de modification qui trahissent l’erreur"`. `F1`, réduit à deux indicateurs, devient aussi plus fragile. Une mauvaise affectation se voit surtout dans l’ajustement, les résidus et les indices de modification.
+:::
+
+::: {.callout-important title="À retenir"}
+- Les paramètres de simulation sont la vérité de la population; les estimations fluctuent autour.
+- La graine rend un tirage reproductible; 0 est une graine comme une autre.
+- L’erreur-type diminue environ comme $1/\sqrt{n}$; la fiabilité d’un score dépend surtout de la force et du nombre des indicateurs.
+- Une estimation isolée comparée à un seuil peut mener à des conclusions opposées pour une même population.
+:::
+
+## Quiz
+
+1. La saturation demandée vaut 0,70 et l’estimation vaut 0,74. L’application s’est-elle trompée ?
+2. Pourquoi l’oméga de quatre indicateurs à 0,70 dépasse-t-il nettement la variance expliquée de chacun ?
+3. Vous modifiez l’affectation des indicateurs après la génération. La population change-t-elle ?
+4. Pourquoi choisir des étendues ponctuelles (bornes égales) pour une expérience ?
+
+::: {.callout-tip title="Réponses" collapse="true"}
+1. Non. C’est une fluctuation d’échantillonnage autour de la valeur de population.
+2. Parce que la somme accumule la variance commune plus vite que la variance propre des indicateurs.
+3. Non. Seul le modèle estimé change; la population reste celle de la génération.
+4. Pour que seuls les réglages étudiés changent d’une condition à l’autre, et pas les saturations tirées.
+:::

@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>4. Au-delà de l’AFC simple</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">4. Au-delà de l’AFC simple</h1>
+<h3 class="subtitle">Modèle structural, multigroupe, structures
+complexes</h3>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#modèle-structural" id="toc-modèle-structural">Modèle
+structural</a>
+<ul>
+<li><a href="#partie-structurale-saturée" id="toc-partie-structurale-saturée">Partie structurale saturée</a></li>
+<li><a href="#partie-structurale-contrainte" id="toc-partie-structurale-contrainte">Partie structurale
+contrainte</a></li>
+<li><a href="#facteurs-de-second-ordre" id="toc-facteurs-de-second-ordre">Facteurs de second ordre</a></li>
+</ul></li>
+<li><a href="#modèle-multigroupe" id="toc-modèle-multigroupe">Modèle
+multigroupe</a></li>
+<li><a href="#structures-complexes" id="toc-structures-complexes">Structures complexes</a>
+<ul>
+<li><a href="#une-charge-croisée" id="toc-une-charge-croisée">Une charge
+croisée</a></li>
+<li><a href="#un-effet-direct-sur-un-indicateur" id="toc-un-effet-direct-sur-un-indicateur">Un effet direct sur un
+indicateur</a></li>
+<li><a href="#une-covariance-résiduelle" id="toc-une-covariance-résiduelle">Une covariance résiduelle</a></li>
+<li><a href="#peu-dindicateurs" id="toc-peu-dindicateurs">Peu
+d’indicateurs</a></li>
+<li><a href="#un-modèle-bifactoriel" id="toc-un-modèle-bifactoriel">Un
+modèle bifactoriel</a></li>
+</ul></li>
+<li><a href="#en-résumé" id="toc-en-résumé">En résumé</a></li>
+</ul>
+</div>
+
+<style>body { font-size: 16px; max-width: 820px; } pre, code { font-size: 14px; }</style>
+<p>Les indices de fiabilité et de validité ont été définis pour une AFC
+à structure simple : chaque indicateur mesure un seul facteur, les
+facteurs sont librement corrélés, et il n’y a qu’un groupe. Cette
+vignette examine ce qui se passe lorsqu’on s’écarte de ce cadre, et
+pourquoi cfadiag refuse parfois de calculer un indice.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(lavaan)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(cfadiag)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>HS <span class="ot">&lt;-</span> HolzingerSwineford1939</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>modele <span class="ot">&lt;-</span> <span class="st">&quot;visuel  =~ x1 + x2 + x3</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="st">           verbal  =~ x4 + x5 + x6</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="st">           vitesse =~ x7 + x8 + x9&quot;</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">cfa</span>(modele, <span class="at">data =</span> HS)</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>d   <span class="ot">&lt;-</span> <span class="fu">cfadiag</span>(fit)</span></code></pre></div>
+<div id="modèle-structural" class="section level1">
+<h1>Modèle structural</h1>
+<div id="partie-structurale-saturée" class="section level2">
+<h2>Partie structurale saturée</h2>
+<p>Remplaçons les corrélations entre facteurs par des régressions : le
+facteur visuel prédit le facteur verbal, et les deux prédisent la
+vitesse.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>fit_sem <span class="ot">&lt;-</span> <span class="fu">sem</span>(<span class="fu">paste</span>(modele, <span class="st">&quot;</span><span class="sc">\n</span><span class="st"> verbal ~ visuel</span><span class="sc">\n</span><span class="st"> vitesse ~ visuel + verbal&quot;</span>), <span class="at">data =</span> HS)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">compute_validity</span>(<span class="fu">as.cfaModel</span>(fit_sem))<span class="sc">$</span>table</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt;   facteur       AVE      MSV       ASV AVE_superieure_MSV</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt; 1  visuel 0.3709840 0.221403 0.2158170               TRUE</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt; 2  verbal 0.7195301 0.210231 0.1451557               TRUE</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; 3 vitesse 0.4297925 0.221403 0.1507418               TRUE</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>d<span class="sc">$</span>validite<span class="sc">$</span>table</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt;   facteur       AVE       MSV       ASV AVE_superieure_MSV</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; 1  visuel 0.3709840 0.2214028 0.2158168               TRUE</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt; 2  verbal 0.7195300 0.2102308 0.1451556               TRUE</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; 3 vitesse 0.4297925 0.2214028 0.1507416               TRUE</span></span></code></pre></div>
+<p>Les deux tableaux sont identiques. Avec trois régressions pour trois
+corrélations, la partie structurale est saturée : elle reproduit
+exactement les mêmes corrélations entre facteurs que l’AFC, et les
+indices de validité ne changent pas.</p>
+<p>Le point technique à retenir est ailleurs. Dans ce SEM, les
+paramètres <span class="math inline">\(\psi\)</span> de verbal et de
+vitesse sont des variances <strong>résiduelles</strong>, et leur
+covariance résiduelle est fixée à 0. Un calcul qui lirait la MSV dans
+ces paramètres conclurait à une corrélation nulle entre facteurs, donc à
+une validité discriminante parfaite. cfadiag utilise les corrélations
+<strong>impliquées</strong> entre facteurs
+(<code>lavInspect(fit, &quot;cor.lv&quot;)</code>), qui sont les corrélations
+entre les facteurs eux-mêmes.</p>
+</div>
+<div id="partie-structurale-contrainte" class="section level2">
+<h2>Partie structurale contrainte</h2>
+<p>Supprimons maintenant l’effet direct du facteur visuel sur la
+vitesse.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>fit_c <span class="ot">&lt;-</span> <span class="fu">sem</span>(<span class="fu">paste</span>(modele, <span class="st">&quot;</span><span class="sc">\n</span><span class="st"> verbal ~ visuel</span><span class="sc">\n</span><span class="st"> vitesse ~ verbal&quot;</span>), <span class="at">data =</span> HS)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">lavInspect</span>(fit_c, <span class="st">&quot;cor.lv&quot;</span>), <span class="dv">3</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt;         visuel verbal vitess</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; visuel   1.000              </span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; verbal   0.469  1.000       </span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; vitesse  0.130  0.277  1.000</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="fu">compute_validity</span>(<span class="fu">as.cfaModel</span>(fit_c))<span class="sc">$</span>table</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt;   facteur       AVE        MSV       ASV AVE_superieure_MSV</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; 1  visuel 0.3715156 0.22007732 0.1184968               TRUE</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; 2  verbal 0.7186479 0.22007732 0.1484713               TRUE</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; 3 vitesse 0.4383508 0.07686529 0.0468908               TRUE</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="fu">lavTestLRT</span>(fit, fit_c)[, <span class="fu">c</span>(<span class="st">&quot;Chisq&quot;</span>, <span class="st">&quot;Df&quot;</span>, <span class="st">&quot;Pr(&gt;Chisq)&quot;</span>)]</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt;         Chisq Df Pr(&gt;Chisq)    </span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; fit    85.305 24               </span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; fit_c 103.411 25   2.09e-05 ***</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span></code></pre></div>
+<p>La corrélation impliquée entre visuel et vitesse tombe de 0,471 à
+0,130 : le modèle ne la laisse plus passer que par le facteur verbal. La
+MSV du facteur vitesse baisse d’autant, et la validité discriminante
+paraît meilleure. Ce gain est un artefact de la contrainte, que les
+données rejettent nettement.</p>
+<p>La règle pratique en découle : <strong>on évalue la validité d’un
+modèle de mesure sur l’AFC, ou sur un SEM dont la partie structurale est
+saturée</strong>, avant de contraindre les relations entre facteurs.
+cfadiag rapporte fidèlement ce qu’implique le modèle qu’on lui donne ;
+c’est à l’analyste de lui donner le bon.</p>
+</div>
+<div id="facteurs-de-second-ordre" class="section level2">
+<h2>Facteurs de second ordre</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>fit_2o <span class="ot">&lt;-</span> <span class="fu">cfa</span>(<span class="fu">paste</span>(modele, <span class="st">&quot;</span><span class="sc">\n</span><span class="st"> g =~ visuel + verbal + vitesse&quot;</span>), <span class="at">data =</span> HS)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">cfadiag</span>(fit_2o)<span class="sc">$</span>fiabilite[, <span class="fu">c</span>(<span class="st">&quot;facteur&quot;</span>, <span class="st">&quot;omega&quot;</span>, <span class="st">&quot;H&quot;</span>)]</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt;   facteur     omega         H</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; 1  visuel 0.6253172 0.6877549</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; 2  verbal 0.8851754 0.8852806</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; 3 vitesse 0.6877598 0.7031277</span></span></code></pre></div>
+<p>Seuls les facteurs mesurés directement par des indicateurs sont
+retenus ; le facteur <code>g</code>, qui n’a pas d’indicateur observé,
+n’apparaît pas. Avec trois facteurs de premier ordre, le second ordre
+est juste identifié et reproduit les mêmes corrélations que l’AFC : les
+indices sont inchangés. La fiabilité du facteur général lui-même (oméga
+hiérarchique) n’est pas calculée par cfadiag ;
+<code>semTools::compRelSEM()</code> la fournit.</p>
+</div>
+</div>
+<div id="modèle-multigroupe" class="section level1">
+<h1>Modèle multigroupe</h1>
+<p>Un ajustement multigroupe produit un rapport par groupe.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>fit_g <span class="ot">&lt;-</span> <span class="fu">cfa</span>(modele, <span class="at">data =</span> HS, <span class="at">group =</span> <span class="st">&quot;school&quot;</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>d_g <span class="ot">&lt;-</span> <span class="fu">cfadiag</span>(fit_g)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">names</span>(d_g)</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Pasteur&quot;     &quot;Grant-White&quot;</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>d_g[[<span class="st">&quot;Pasteur&quot;</span>]]</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; ================================================</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt;  Diagnostic du modèle de mesure — groupe Pasteur </span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt; ================================================</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt;  3 facteurs, 9 indicateurs, N = 156, estimateur ML</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt; Ajustement global (modèle multigroupe, tous groupes confondus)</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt;   Chi carré = 115,851, dl = 48, p &lt; 0,001</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt;   RMSEA = 0,097 [IC 90 % : 0,075 ; 0,120]</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt;   CFI    0,923   repère ≥ 0,950 : non atteint</span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt;   TLI    0,885   repère ≥ 0,950 : non atteint</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt;   RMSEA  0,097   repère ≤ 0,060 : non atteint</span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt;   SRMR   0,068   repère ≤ 0,080 : atteint</span></span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a><span class="co">#&gt;   Les repères sont des guides conventionnels, pas des seuils de décision.</span></span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co">#&gt; Fiabilité des scores composés</span></span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a><span class="co">#&gt;  Facteur Items Omega    CR Alpha     H</span></span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a><span class="co">#&gt;   visuel     3 0,617 0,622 0,621 0,806</span></span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="co">#&gt;   verbal     3 0,877 0,877 0,871 0,878</span></span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a><span class="co">#&gt;  vitesse     3 0,618 0,621 0,611 0,634</span></span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a><span class="co">#&gt; Validité convergente et discriminante</span></span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a><span class="co">#&gt;  Facteur   AVE   MSV   ASV AVE &gt; MSV</span></span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a><span class="co">#&gt;   visuel 0,388 0,234 0,162       oui</span></span>
+<span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a><span class="co">#&gt;   verbal 0,704 0,234 0,170       oui</span></span>
+<span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a><span class="co">#&gt;  vitesse 0,356 0,106 0,098       oui</span></span>
+<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-33"><a href="#cb5-33" tabindex="-1"></a><span class="co">#&gt; Fornell–Larcker (diagonale : racine de l&#39;AVE ; hors diagonale : corrélations)</span></span>
+<span id="cb5-34"><a href="#cb5-34" tabindex="-1"></a><span class="co">#&gt;         visuel verbal vitesse</span></span>
+<span id="cb5-35"><a href="#cb5-35" tabindex="-1"></a><span class="co">#&gt; visuel  0,623  0,484  0,299  </span></span>
+<span id="cb5-36"><a href="#cb5-36" tabindex="-1"></a><span class="co">#&gt; verbal  0,484  0,839  0,325  </span></span>
+<span id="cb5-37"><a href="#cb5-37" tabindex="-1"></a><span class="co">#&gt; vitesse 0,299  0,325  0,597  </span></span>
+<span id="cb5-38"><a href="#cb5-38" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-39"><a href="#cb5-39" tabindex="-1"></a><span class="co">#&gt; HTMT</span></span>
+<span id="cb5-40"><a href="#cb5-40" tabindex="-1"></a><span class="co">#&gt;         visuel verbal vitesse</span></span>
+<span id="cb5-41"><a href="#cb5-41" tabindex="-1"></a><span class="co">#&gt; visuel         0,406  0,409  </span></span>
+<span id="cb5-42"><a href="#cb5-42" tabindex="-1"></a><span class="co">#&gt; verbal                0,346  </span></span>
+<span id="cb5-43"><a href="#cb5-43" tabindex="-1"></a><span class="co">#&gt; vitesse                      </span></span>
+<span id="cb5-44"><a href="#cb5-44" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-45"><a href="#cb5-45" tabindex="-1"></a><span class="co">#&gt; Signaux à examiner</span></span>
+<span id="cb5-46"><a href="#cb5-46" tabindex="-1"></a><span class="co">#&gt;   - Charge faible : visuel → x2 = 0,336</span></span></code></pre></div>
+<p>Deux précisions sur ce rapport.</p>
+<ul>
+<li><strong>L’ajustement global</strong> est celui du modèle entier,
+tous groupes confondus ; il est donc identique dans chaque rapport, et
+le rapport l’indique.</li>
+<li><strong>Les autres indices</strong> sont propres au groupe :
+charges, fiabilité, validité et HTMT sont calculés avec les paramètres
+et la matrice observée de ce groupe.
+<code>as.cfaModel(fit_g, group = &quot;Pasteur&quot;)</code> extrait un seul
+groupe.</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>compar <span class="ot">&lt;-</span> <span class="cf">function</span>(dd) <span class="fu">data.frame</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="at">groupe =</span> <span class="fu">names</span>(dd),</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="at">charge_x2 =</span> <span class="fu">sapply</span>(dd, <span class="cf">function</span>(g) g<span class="sc">$</span>charges[<span class="st">&quot;x2&quot;</span>, <span class="st">&quot;visuel&quot;</span>]),</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="at">omega_visuel =</span> <span class="fu">sapply</span>(dd, <span class="cf">function</span>(g) g<span class="sc">$</span>fiabilite<span class="sc">$</span>omega[<span class="dv">1</span>]),</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="at">H_visuel =</span> <span class="fu">sapply</span>(dd, <span class="cf">function</span>(g) g<span class="sc">$</span>fiabilite<span class="sc">$</span>H[<span class="dv">1</span>]),</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="at">omega_vitesse =</span> <span class="fu">sapply</span>(dd, <span class="cf">function</span>(g) g<span class="sc">$</span>fiabilite<span class="sc">$</span>omega[<span class="dv">3</span>]), <span class="at">row.names =</span> <span class="cn">NULL</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="fu">compar</span>(d_g)</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt;        groupe charge_x2 omega_visuel  H_visuel omega_vitesse</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt; 1     Pasteur 0.3362648    0.6173551 0.8063686     0.6175033</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt; 2 Grant-White 0.5165195    0.6631878 0.6810605     0.7640069</span></span></code></pre></div>
+<p>À Pasteur, x2 est faiblement lié au facteur visuel, d’où un signal de
+charge faible et un grand écart entre l’oméga et H. Cet écart suggère
+que les charges diffèrent entre écoles ; on le vérifie en les
+contraignant à l’égalité.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>fit_gl <span class="ot">&lt;-</span> <span class="fu">cfa</span>(modele, <span class="at">data =</span> HS, <span class="at">group =</span> <span class="st">&quot;school&quot;</span>, <span class="at">group.equal =</span> <span class="st">&quot;loadings&quot;</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="fu">lavTestLRT</span>(fit_g, fit_gl)[, <span class="fu">c</span>(<span class="st">&quot;Chisq diff&quot;</span>, <span class="st">&quot;Df diff&quot;</span>, <span class="st">&quot;Pr(&gt;Chisq)&quot;</span>)]</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt;        Chisq diff Df diff Pr(&gt;Chisq)</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; fit_g                               </span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; fit_gl     8.1922       6     0.2244</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="fu">compar</span>(<span class="fu">cfadiag</span>(fit_gl))</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt;        groupe charge_x2 omega_visuel H_visuel omega_vitesse</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; 1     Pasteur 0.4320036    0.6295925 0.692614     0.6127562</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; 2 Grant-White 0.4659851    0.6525834 0.680620     0.7643913</span></span></code></pre></div>
+<p>L’égalité des charges n’est pas rejetée (p = 0,224), malgré l’écart
+observé pour x2 : avec 156 élèves à Pasteur, la charge de x2 est estimée
+avec beaucoup d’incertitude. Sous invariance des charges, l’écart entre
+l’oméga et H du facteur visuel se réduit à Pasteur. Les fiabilités
+restent néanmoins différentes d’un groupe à l’autre, car la variance des
+facteurs et les variances résiduelles ne sont pas contraintes : à
+charges égales, un facteur plus dispersé dans un groupe y produit un
+score plus fiable. La fiabilité est une propriété d’un score dans une
+population, pas d’un test.</p>
+</div>
+<div id="structures-complexes" class="section level1">
+<h1>Structures complexes</h1>
+<div id="une-charge-croisée" class="section level2">
+<h2>Une charge croisée</h2>
+<p>La vignette « Prise en main » l’a montré : lorsqu’un indicateur
+mesure deux facteurs, cfadiag ne calcule ni oméga, ni CR, ni H, ni AVE
+pour ces facteurs, et le HTMT de la paire n’est pas calculé. La raison
+est que la fiabilité d’un score dépend du score visé. Prenons la somme
+de x7, x8 et x9 dans le modèle où x9 charge aussi sur le facteur
+visuel.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>fit_x9 <span class="ot">&lt;-</span> <span class="fu">cfa</span>(<span class="fu">paste</span>(modele, <span class="st">&quot;</span><span class="sc">\n</span><span class="st"> visuel =~ x9&quot;</span>), <span class="at">data =</span> HS)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>Lambda <span class="ot">&lt;-</span> <span class="fu">lavInspect</span>(fit_x9, <span class="st">&quot;est&quot;</span>)<span class="sc">$</span>lambda</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>Psi    <span class="ot">&lt;-</span> <span class="fu">lavInspect</span>(fit_x9, <span class="st">&quot;cov.lv&quot;</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>Sigma  <span class="ot">&lt;-</span> <span class="fu">lavInspect</span>(fit_x9, <span class="st">&quot;cov.ov&quot;</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">as.numeric</span>(<span class="fu">rownames</span>(Lambda) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;x7&quot;</span>, <span class="st">&quot;x8&quot;</span>, <span class="st">&quot;x9&quot;</span>)), <span class="fu">rownames</span>(Lambda))</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>var_somme <span class="ot">&lt;-</span> <span class="fu">drop</span>(<span class="fu">t</span>(w) <span class="sc">%*%</span> Sigma <span class="sc">%*%</span> w)</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>cible     <span class="ot">&lt;-</span> <span class="fu">drop</span>((<span class="fu">t</span>(w) <span class="sc">%*%</span> Lambda[, <span class="st">&quot;vitesse&quot;</span>])<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> Psi[<span class="st">&quot;vitesse&quot;</span>, <span class="st">&quot;vitesse&quot;</span>]) <span class="sc">/</span> var_somme</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>commune   <span class="ot">&lt;-</span> <span class="fu">drop</span>(<span class="fu">t</span>(w) <span class="sc">%*%</span> Lambda <span class="sc">%*%</span> Psi <span class="sc">%*%</span> <span class="fu">t</span>(Lambda) <span class="sc">%*%</span> w) <span class="sc">/</span> var_somme</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="fu">c</span>(<span class="at">vitesse_seule =</span> cible, <span class="at">toute_variance_commune =</span> commune)</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co">#&gt;          vitesse_seule toute_variance_commune </span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co">#&gt;              0.6189635              0.7190702</span></span></code></pre></div>
+<p>La même somme a deux fiabilités selon ce qu’on veut mesurer. Si le
+score doit refléter la vitesse seule, la part de variance du facteur
+vitesse est de 0,619. Si l’on accepte que le score mélange vitesse et
+perception visuelle, la part de variance commune monte à 0,719. Aucun de
+ces deux nombres n’est « la » fiabilité : le choix appartient à
+l’analyste, qui doit dire quel score il construit et ce qu’il veut qu’il
+mesure. C’est ce que dit la colonne <code>statut</code>.</p>
+</div>
+<div id="un-effet-direct-sur-un-indicateur" class="section level2">
+<h2>Un effet direct sur un indicateur</h2>
+<p>Un indicateur peut aussi être régressé sur une autre variable, par
+exemple pour représenter un effet de méthode.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>fit_d <span class="ot">&lt;-</span> <span class="fu">sem</span>(<span class="fu">paste</span>(modele, <span class="st">&quot;</span><span class="sc">\n</span><span class="st"> x4 ~ x1&quot;</span>), <span class="at">data =</span> HS)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>d_d <span class="ot">&lt;-</span> <span class="fu">cfadiag</span>(fit_d)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>d_d<span class="sc">$</span>signaux</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt;                        signal</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; 1 Effet direct sur indicateur</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt;                                                               detail</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; 1 x4 est régressé sur une autre variable ; score de verbal à définir</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>d_d<span class="sc">$</span>fiabilite[, <span class="fu">c</span>(<span class="st">&quot;facteur&quot;</span>, <span class="st">&quot;omega&quot;</span>, <span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;H&quot;</span>)]</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt;   facteur     omega     alpha         H</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; 1  visuel 0.6259602 0.6261171 0.6801444</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; 2  verbal        NA 0.8827069        NA</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt; 3 vitesse 0.6875866 0.6884550 0.7029732</span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="fu">strwrap</span>(d_d<span class="sc">$</span>fiabilite<span class="sc">$</span>statut[<span class="dv">2</span>], <span class="dv">76</span>))</span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#&gt; Effet direct sur un indicateur : définir un score et sa variance cible</span></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co">#&gt; avant d&#39;évaluer sa fiabilité.</span></span></code></pre></div>
+<p>La variance de x4 contient désormais une part qui vient de x1, donc
+du facteur visuel par une voie indirecte. Le score verbal n’a plus une
+seule source de variance vraie, et cfadiag le signale au lieu de
+calculer sa fiabilité sous une définition implicite. Les facteurs visuel
+et vitesse, dont aucun indicateur n’est régressé, gardent leurs indices.
+Les charges restent correctement lues.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">round</span>(d_d<span class="sc">$</span>charges[<span class="fu">c</span>(<span class="st">&quot;x1&quot;</span>, <span class="st">&quot;x4&quot;</span>), ], <span class="dv">3</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co">#&gt;    visuel verbal vitesse</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; x1  0.759  0.000       0</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; x4  0.000  0.821       0</span></span></code></pre></div>
+</div>
+<div id="une-covariance-résiduelle" class="section level2">
+<h2>Une covariance résiduelle</h2>
+<p>Une covariance résiduelle ne rend pas la structure complexe : chaque
+indicateur ne mesure toujours qu’un facteur. Les indices restent
+calculés, et la covariance est intégrée au dénominateur de l’oméga et à
+H. La vignette « Comprendre les indices » détaille ses effets sur chaque
+indice.</p>
+</div>
+<div id="peu-dindicateurs" class="section level2">
+<h2>Peu d’indicateurs</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>fit_2 <span class="ot">&lt;-</span> <span class="fu">cfa</span>(<span class="st">&quot;visuel =~ x1 + x2 + x3</span><span class="sc">\n</span><span class="st"> verbal =~ x4 + x5&quot;</span>, <span class="at">data =</span> HS)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">cfadiag</span>(fit_2)<span class="sc">$</span>signaux</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co">#&gt;              signal                   detail</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co">#&gt; 1 Peu d&#39;indicateurs verbal : 2 indicateur(s)</span></span></code></pre></div>
+<p>Un facteur à deux indicateurs n’est identifié que grâce à ses
+corrélations avec les autres facteurs ; sa fiabilité est calculée mais
+repose sur peu d’information, d’où le signal. Un modèle à un seul
+facteur et trois indicateurs est juste identifié : son ajustement est
+parfait par construction, et le rapport n’évalue pas les repères (voir
+<code>cfadiag(cfa(&quot;verbal =~ x4 + x5 + x6&quot;, data = HS))</code>).</p>
+</div>
+<div id="un-modèle-bifactoriel" class="section level2">
+<h2>Un modèle bifactoriel</h2>
+<p>Dans un modèle bifactoriel, chaque indicateur mesure un facteur
+général et un facteur spécifique. Toute la structure est donc
+complexe.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>fit_b <span class="ot">&lt;-</span> <span class="fu">cfa</span>(<span class="st">&quot;g  =~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="st">              s1 =~ x1 + x2 + x3</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="st">              s2 =~ x4 + x5 + x6</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="st">              s3 =~ x7 + x8 + x9&quot;</span>, <span class="at">data =</span> HS, <span class="at">orthogonal =</span> <span class="cn">TRUE</span>, <span class="at">std.lv =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>d_b <span class="ot">&lt;-</span> <span class="fu">cfadiag</span>(fit_b)</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="fu">table</span>(d_b<span class="sc">$</span>signaux<span class="sc">$</span>signal)</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="co">#&gt;                  Cas de Heywood                  Charge croisée </span></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="co">#&gt;                               1                               9 </span></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="co">#&gt;                   Charge faible                 Charge négative </span></span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="co">#&gt;                               7                               1 </span></span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a><span class="co">#&gt; Matrice résiduelle inadmissible </span></span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a><span class="co">#&gt;                               1</span></span>
+<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a><span class="fu">head</span>(d_b<span class="sc">$</span>signaux, <span class="dv">2</span>)</span>
+<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a><span class="co">#&gt;                            signal</span></span>
+<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a><span class="co">#&gt; 1                  Cas de Heywood</span></span>
+<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a><span class="co">#&gt; 2 Matrice résiduelle inadmissible</span></span>
+<span id="cb12-18"><a href="#cb12-18" tabindex="-1"></a><span class="co">#&gt;                                               detail</span></span>
+<span id="cb12-19"><a href="#cb12-19" tabindex="-1"></a><span class="co">#&gt; 1     x1 : variance résiduelle standardisée = -0,840</span></span>
+<span id="cb12-20"><a href="#cb12-20" tabindex="-1"></a><span class="co">#&gt; 2 La matrice des résidus n&#39;est pas définie positive.</span></span></code></pre></div>
+<p>Sur ces données, la solution est inadmissible : la variance
+résiduelle de x1 est négative (cas de Heywood), et cfadiag le signale
+avant toute autre chose. Même pour une solution admissible, la fiabilité
+d’un modèle bifactoriel se décrit par des indices propres (oméga
+hiérarchique, oméga des sous-échelles, ECV), qui sortent du champ du
+paquet.</p>
+</div>
+</div>
+<div id="en-résumé" class="section level1">
+<h1>En résumé</h1>
+<table>
+<colgroup>
+<col width="34%" />
+<col width="65%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situation</th>
+<th>Ce que fait cfadiag</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SEM, partie structurale saturée</td>
+<td>mêmes indices que l’AFC</td>
+</tr>
+<tr class="even">
+<td>SEM, partie structurale contrainte</td>
+<td>indices fondés sur les corrélations impliquées par les contraintes ;
+évaluer la validité sur l’AFC</td>
+</tr>
+<tr class="odd">
+<td>Second ordre</td>
+<td>indices des facteurs de premier ordre ; facteur général ignoré</td>
+</tr>
+<tr class="even">
+<td>Multigroupe</td>
+<td>un rapport par groupe ; ajustement global commun</td>
+</tr>
+<tr class="odd">
+<td>Charge croisée</td>
+<td>fiabilité, AVE et HTMT de la paire non calculés ; alpha
+conservé</td>
+</tr>
+<tr class="even">
+<td>Effet direct sur un indicateur</td>
+<td>fiabilité et AVE non calculées ; signal</td>
+</tr>
+<tr class="odd">
+<td>Covariance résiduelle</td>
+<td>indices calculés ; signal</td>
+</tr>
+<tr class="even">
+<td>Bifactoriel</td>
+<td>structure complexe ; hors champ</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

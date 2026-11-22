@@ -1,0 +1,8 @@
+| Facteur 1 | Facteur 2 | HTMT |
+| --- | --- | --- |
+| Lettres | Raisonnement | 0,820 |
+| Matrices | Raisonnement | 0,788 |
+| Rotation | Raisonnement | 0,691 |
+| Matrices | Lettres | 0,785 |
+| Rotation | Lettres | 0,595 |
+| Rotation | Matrices | 0,635 |

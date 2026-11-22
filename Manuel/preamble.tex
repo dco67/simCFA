@@ -1,0 +1,14 @@
+\usepackage{eso-pic}
+\usepackage{needspace}
+\usepackage{etoolbox}
+\AtBeginEnvironment{longtable}{\small\setlength{\tabcolsep}{4pt}}
+\setlength{\emergencystretch}{3em}
+\setkomafont{disposition}{\normalfont\sffamily\bfseries}
+\RedeclareSectionCommand[beforeskip=0pt,afterskip=1.2\baselineskip]{chapter}
+
+\RedeclareSectionCommand[beforeskip=.9\baselineskip,afterskip=.45\baselineskip]{section}
+
+% Éviter l'interprétation des lettres d'annexes comme numéros de parties.
+\AtEndPreamble{\ifdefined\frenchsetup\frenchsetup{TocPartNameFull=false}\fi}
+
+\DeclareTOCStyleEntry[numwidth=2.5em]{tocline}{chapter}

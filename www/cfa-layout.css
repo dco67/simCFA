@@ -1,0 +1,41 @@
+/* Hauteurs naturelles : les commandes ne remplissent plus les espaces libres. */
+.cfa-configuration, .cfa-configuration > .card-body,
+.cfa-config-inner, .cfa-config-inner > .card-body {
+  height: auto !important; min-height: 0 !important; flex: 0 0 auto !important;
+}
+.cfa-configuration > .card-body, .cfa-config-inner > .card-body {
+  display: block !important;
+}
+.cfa-model-layout {
+  display: grid; grid-template-columns: minmax(0, 7fr) minmax(320px, 5fr);
+  align-items: start; gap: 16px;
+}
+.cfa-model-stack { display: grid; align-content: start; gap: 16px; min-width: 0; }
+.cfa-model-page .card { height: auto; min-height: 0; margin-bottom: 0; }
+.cfa-model-page .card-body { display: block; flex: 0 0 auto; }
+.cfa-model-page hr { margin: 12px 0; }
+.cfa-model-page .shiny-input-container { margin-bottom: 12px; max-width: 100%; }
+.cfa-model-page .shiny-input-container:not(.shiny-input-container-inline) { width: 100%; }
+.cfa-factor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px,100%), 1fr)); gap: 12px; }
+.cfa-factor { border: 1px solid #dce3e8; border-radius: 6px; padding: 12px; min-width: 0; }
+.cfa-model-page details { padding: 8px 0; }
+.cfa-model-page summary { cursor: pointer; font-weight: 500; }
+.cfa-model-page details[open] > summary { margin-bottom: 10px; }
+.cfa-model-page .help-block { margin: 6px 0 10px; }
+.cfa-two-controls { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; align-items: start; }
+.cfa-inline-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+.cfa-inline-actions > .shiny-input-container { flex: 1 1 160px; margin-bottom: 0; }
+.cfa-inline-actions > .btn { flex: 1 1 180px; white-space: normal; }
+.cfa-model-count p { display: inline-block; margin: 0 18px 8px 0; }
+.cfa-ordinal-options { font-size: .95rem; }
+.cfa-example-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.cfa-model-page .btn, .cfa-example-actions .btn { height: auto; min-height: 38px; }
+.cfa-source-layout { display: grid; grid-template-columns: minmax(280px,4fr) minmax(0,8fr); gap: 20px; align-items: start; }
+.cfa-example-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 1000px) {
+  .cfa-model-layout { grid-template-columns: minmax(0,1fr); }
+  .cfa-source-layout { grid-template-columns: minmax(0,1fr); }
+}
+@media (max-width: 650px) {
+  .cfa-two-controls, .cfa-example-grid { grid-template-columns: minmax(0,1fr); }
+}

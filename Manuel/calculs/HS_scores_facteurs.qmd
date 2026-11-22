@@ -1,0 +1,5 @@
+| Paire | Moyennes | Facteurs |
+| --- | --- | --- |
+| Visuel / Texte | 0,314 | 0,459 |
+| Visuel / Vitesse | 0,271 | 0,471 |
+| Texte / Vitesse | 0,225 | 0,283 |

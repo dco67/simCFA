@@ -1,0 +1,21 @@
+Démocratie politique — 75 pays, 11 indicateurs
+Indicateurs d’industrialisation et de démocratie en 1960 et 1965; exemple de Bollen (1989), 75 pays.
+
+Les indicateurs représentent-ils trois dimensions distinctes mais corrélées ?
+
+y1–y4 : liberté de la presse, opposition politique, équité des élections et efficacité du parlement en 1960
+y5–y8 : mêmes dimensions en 1965
+x1–x3 : industrialisation en 1960
+
+AFC à trois facteurs corrélés, sans les régressions ni les covariances résiduelles du modèle structurel complet de Bollen. Les mesures répétées peuvent partager une spécificité. Petit échantillon et indicateurs traités comme continus : discutez ces choix.
+
+Préparation : Copie intégrale de lavaan, sans transformation.
+Source : lavaan
+Bollen, K. A. (1989). Structural Equations with Latent Variables. Wiley.
+https://search.r-project.org/CRAN/refmans/lavaan/html/PoliticalDemocracy.html
+
+Estimateur proposé : ML
+Modèle de départ :
+Democratie60 =~ y1 + y2 + y3 + y4
+Democratie65 =~ y5 + y6 + y7 + y8
+Industrialisation =~ x1 + x2 + x3

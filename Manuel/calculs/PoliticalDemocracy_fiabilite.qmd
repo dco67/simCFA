@@ -1,0 +1,5 @@
+| Facteur | Alpha | Omega | AVE | H |
+| --- | --- | --- | --- | --- |
+| Democratie60 | 0,859 | 0,865 | 0,632 | 0,885 |
+| Democratie65 | 0,883 | 0,886 | 0,661 | 0,889 |
+| Industrialisation | 0,902 | 0,944 | 0,851 | 0,964 |

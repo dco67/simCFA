@@ -1,0 +1,23 @@
+BFI / SAPA — 2 800 personnes, 25 items de personnalité
+Vingt-cinq items de personnalité du projet SAPA, 2 800 répondants, fichier bfi du package psych.
+
+Les vingt-cinq items présentent-ils la structure attendue des cinq dimensions de personnalité ?
+
+A1–A5 : agréabilité; C1–C5 : conscience; E1–E5 : extraversion; N1–N5 : neuroticisme; O1–O5 : ouverture
+Réponses de 1 (très inexact) à 6 (très exact); cellules vides = données manquantes
+Items orientés en sens inverse selon les clés : A1, C4, C5, E1, E2, O2, O5; aucun recodage effectué
+
+Items déclarés ordinaux, WLSMV et cas complets proposés. Les items inversés sont conservés dans leur codage d’origine : des saturations négatives peuvent être attendues. Avant de former un score, vérifiez les clés. Ces items SAPA ne constituent pas le Big Five Inventory d’Oliver John.
+
+Préparation : Vingt-cinq colonnes A1–O5 de psych::bfi, toutes les 2 800 lignes; variables démographiques retirées; valeurs manquantes conservées.
+Source : psych
+Revelle, W., Wilt, J. et Rosenthal, A. (2010). Personality and cognition: The personality-cognition link. Items issus de l’International Personality Item Pool via SAPA; voir la notice bfi.
+https://search.r-project.org/CRAN/refmans/psych/html/bfi.html
+
+Estimateur proposé : WLSMV
+Modèle de départ :
+Agreabilite =~ A1 + A2 + A3 + A4 + A5
+Conscience =~ C1 + C2 + C3 + C4 + C5
+Extraversion =~ E1 + E2 + E3 + E4 + E5
+Neuroticisme =~ N1 + N2 + N3 + N4 + N5
+Ouverture =~ O1 + O2 + O3 + O4 + O5

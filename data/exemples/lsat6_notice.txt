@@ -1,0 +1,18 @@
+LSAT 6 — 1 000 réponses, 5 items binaires
+Section 6 (classification de figures) du LSAT, 1 000 observations; exemple classique de Bock et Lieberman (1970).
+
+Un seul facteur suffit-il à représenter les cinq réponses binaires ?
+
+Q1–Q5 : cinq items de la section 6
+0 = réponse incorrecte; 1 = réponse correcte
+
+Le fichier individuel est développé à partir des effectifs des profils de réponses publiés : son ordre ne désigne pas les personnes d’origine. Les items sont déclarés ordinaux et WLSMV est proposé. Comparez ensuite avec la section 7, analysée séparément.
+
+Préparation : Copie de psych::lsat6, sans modification des réponses; fichier à 1 000 lignes dérivé de la table des profils.
+Source : psych
+Bock, R. D. et Lieberman, M. (1970). Fitting a response model for n dichotomously scored items. Psychometrika, 35, 179–197.
+https://search.r-project.org/CRAN/refmans/psych/html/bock.table.html
+
+Estimateur proposé : WLSMV
+Modèle de départ :
+Aptitude =~ Q1 + Q2 + Q3 + Q4 + Q5

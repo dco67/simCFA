@@ -1,0 +1,4 @@
+| Modèle | ddl | CFI | RMSEA | SRMR |
+| --- | --- | --- | --- | --- |
+| Trois facteurs | 24 | 0,931 | 0,092 | 0,065 |
+| Un facteur | 27 | 0,677 | 0,187 | 0,143 |
